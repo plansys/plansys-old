@@ -1,5 +1,8 @@
 <?php Yii::import('application.components.utility.Asset'); ?>
 <?php Asset::registerJS($this->vpath . '.index'); ?>
+<script type="text" id="chat-data">
+     <?php echo json_encode($chat); ?>
+</script>
 <div ng-controller="Index" style="overflow:hidden" >
     <?php
         FormBuilder::renderUI('WebSocketClient', [

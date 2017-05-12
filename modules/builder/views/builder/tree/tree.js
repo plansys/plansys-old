@@ -49,20 +49,34 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
 
                               if (typeof callback == "function") callback();
                               $timeout(function() {
+                                   $scope.initCount = 0;
                                    var initExpand = function(tree, tdir) {
                                         var shouldExpand = function(item) {
                                              if (item.parent[tactive] == $scope.treebar.root[tactive]) {
-                                                  return (tdir[item.d]);
+                                                  var res = (tdir[item.d]);
+                                                  if (res) {
+                                                       $scope.init = true;
+                                                       $scope.initCount++;
+                                                  }
+                                                  return res;
                                              }
                                              else if (item.parent[tactive].d) {
                                                   if (!tdir) return false;
-                                                  return tdir[item.d.substr(item.parent[tactive].d.length + 1)];
+
+                                                  var res = tdir[item.d.substr(item.parent[tactive].d.length + 1)];
+
+                                                  if (res) {
+                                                       $scope.init = true;
+                                                       $scope.initCount++;
+                                                  }
+                                                  return res;
                                              }
                                         }
                                         tree.forEach(function(item) {
                                              if (item.t == "dir") {
                                                   if (shouldExpand(item)) {
                                                        $scope.expand(item, function() {
+                                                            $scope.initCount--;
                                                             if (item.childs) {
                                                                  var d = item.d;
 
@@ -74,6 +88,10 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                                                                       d = item.d.substr(item.parent[tactive].d.length + 1);
                                                                  }
                                                                  initExpand(item.childs, tdir[d]);
+                                                            }
+
+                                                            if ($scope.initCount <= 0) {
+                                                                 $scope.init = false;
                                                             }
                                                        });
                                                   }
@@ -157,7 +175,7 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                }
           },
           menu: [{
-               icon: "fa fa-fw fa-file-text-o",
+               icon: "fa fa-file-text-o",
                label: "New File",
                click: function(item) {
                     $timeout(function() {
@@ -197,7 +215,7 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                     });
                }
           }, {
-               icon: "fa fa-fw fa-folder-o",
+               icon: "fa fa-folder-o",
                label: "New Folder",
                click: function(item) {
                     var name = prompt("New Folder Name:")
@@ -229,7 +247,8 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
           }, {
                hr: true,
           }, {
-               label: '<i class="fa fa-search pull-right" style="color:#999"></i> Search Here',
+               icon: "fa fa-search",
+               label: 'Search Here',
                visible: function(item) {
                     return item.t == 'dir' && $scope.treebar.active == 'file';
                },
@@ -238,6 +257,7 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                     $(".search-text").focus();
                }
           }, {
+               icon: "fa fa-refresh",
                label: "Refresh",
                visible: function(item) {
                     return item.t == 'dir';
@@ -246,6 +266,9 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                     $scope.refreshDir(item);
                }
           }, {
+               hr: true,
+          }, {
+               icon: "fa fa-copy",
                label: function(item) {
                     return "Copy ";
                },
@@ -253,10 +276,11 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                     $scope.copiedItem = item;
                }
           }, {
+               icon: "fa fa-paste",
                label: function(item) {
                     var itn = $scope.copiedItem;
-                    var dot = itn.n.length > 13 ? "..." : "";
-                    return "Paste <b class='paste-item' tooltip='" + itn.n + "'>" + itn.n.substr(0, 13) + dot + "</b>";
+                    var dot = itn.n.length > 10 ? "..." : "";
+                    return "Paste <b class='paste-item' tooltip='" + itn.n + "'>" + itn.n.substr(0, 10) + dot + "</b>";
                },
                visible: function(item) {
                     return !!$scope.copiedItem && item.t == 'dir';
@@ -268,6 +292,7 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
           }, {
                hr: true,
           }, {
+               icon: "fa fa-pencil-square-o",
                label: "Rename",
                click: function(item) {
                     var newname = prompt("New file name:", item.n);
@@ -290,6 +315,7 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                     });
                }
           }, {
+               icon: "fa fa-eraser",
                label: "Delete",
                visible: function(item) {
                     if (typeof item.removable != "undefined" && !item.removable) return false;
@@ -670,7 +696,7 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                if ($scope.isArray($scope.expanded[$scope.treebar.active])) {
                     $scope.expanded[$scope.treebar.active] = {};
                }
-               
+
                var tdirs = $scope.getPathFromItem(item);
                var tdir = $scope.expanded[$scope.treebar.active];
                tdirs.forEach(function(dir) {
@@ -703,7 +729,9 @@ app.controller("Tree", function($scope, $http, $timeout, $q) {
                if (item.expanding) {
                     $scope.expand(item, item.expanding.shift());
                }
-               window.builder.set('tree.expand', $scope.expanded);
+               if (!$scope.init) {
+                    window.builder.set('tree.expand', $scope.expanded);
+               }
           }
 
           if (!item.childs || item.childs.length == 0) {

@@ -39,6 +39,11 @@ app.controller("Index", function($scope, $http, $timeout, $q) {
         }
     }
 
+
+    if ($("#chat-data").text().trim() != "") {
+        $scope.statusbar.msg = JSON.parse($("#chat-data").text());
+    }
+
     window.addEventListener("beforeunload", function(e) {
         var confirmationMessage = 'It looks like you have been editing something. ' +
             'If you leave before saving, your changes will be lost.';
@@ -75,7 +80,9 @@ app.controller("Index", function($scope, $http, $timeout, $q) {
         }
     }
 
-    $scope.getPeopleName = function(user) {
+    $scope.getPeopleName = function(user, simple) {
+        if (!user || !user.uid) return "";
+
         var isyou = user.cid == $scope.statusbar.me.cid ? ' (You)' : '';
         if (typeof $scope.statusbar.peopleName[user.uid] == "undefined") {
             $http.get(Yii.app.createUrl('/builder/builder/getUserName&id=' + user.uid))
@@ -85,6 +92,12 @@ app.controller("Index", function($scope, $http, $timeout, $q) {
             $scope.statusbar.peopleName[user.uid] = "";
         }
 
+        if (simple) {
+            if (isyou) return 'You';
+            else {
+                return $scope.statusbar.peopleName[user.uid] + ' #' + user.cid
+            }
+        }
         return $scope.statusbar.peopleName[user.uid] + ' #' + user.cid + isyou;
     }
 
@@ -106,7 +119,8 @@ app.controller("Index", function($scope, $http, $timeout, $q) {
 
     $scope.setp = false;
     $scope.uid = $("#builder").attr('uid')
-    $scope.setStack = []
+    $scope.setStack = [];
+    $scope.askStack = {};
     var initWs = function() {
         $timeout(function() {
             if (!$scope.ws) {
@@ -123,6 +137,7 @@ app.controller("Index", function($scope, $http, $timeout, $q) {
             $scope.ws.disconnected(function() {
                 $scope.statusbar.connected = false;
                 console.log("WS Disonnected")
+
             });
 
             $scope.ws.receive(function(msg) {
@@ -130,8 +145,78 @@ app.controller("Index", function($scope, $http, $timeout, $q) {
                 var type = msgp.shift();
                 var content = msgp.join(":");
                 switch (type) {
+                    case "ask":
+                        var askp = content.split("~")
+                        var ask = askp.shift();
+                        var answer = askp.join("~");
+                        if ($scope.askStack[ask]) {
+                            $scope.askStack[ask](answer);
+                            delete($scope.askStack[ask]);
+                        }
+                        break;
+                    case "request-edit":
+                        var itemp = content.split("|");
+                        var ed = itemp.shift();
+                        var from = JSON.parse(itemp.join("|"));
+                        window.tabs.list.forEach(function(item) {
+                            if (item.id == ed) {
+                                item.editing = from;
+                                window.builder.ask('you-can-edit', JSON.stringify({
+                                    itemid: item.id,
+                                    editor: from,
+                                    code: item.code.content,
+                                    unsaved: item.unsaved
+                                }));
+                            }
+                        });
+                        break;
+                    case "you-can-edit":
+                        var e = JSON.parse(content);
+                        window.tabs.list.forEach(function(item) {
+                            if (item.id == e.itemid) {
+                                item.editing = $scope.statusbar.me;
+                                if (!item.code) {
+                                    item.code = {};
+                                }
+                                if (window.tabs.editRequest[item.id]) {
+                                    delete window.tabs.editRequest[item.id];
+                                }
+                                item.unsaved = e.unsaved;
+                                window.tabs.open(item, {
+                                    reload: true,
+                                    content: e.code
+                                });
+                            }
+                        });
+                        break;
                     case "people":
                         $scope.statusbar.people = JSON.parse(content);
+
+                        if (window.tabs.active && window.tabs.active.editing && $scope.statusbar.me.cid) {
+                            var active = window.tabs.active.editing;
+
+                            if (active.cid != $scope.statusbar.me.cid) { // kalau yg ngedit skrg bukan aku (aku g bisa ngedit)
+                                var found = false;
+                                $scope.statusbar.people.forEach(function(u) {
+                                    if (u.cid == active.cid) { // kalau yg ngedit skrg masih online
+                                        // cari tahu siapa yg ngedit file ini selain saya
+                                        window.builder.ask('who-edit', $scope.active.id, function(user) {
+                                            // kalau ga ada, ya biar saya aku aja yg edit
+                                            if (!user.cid) {
+                                                window.builder.ask('edit-by-me', $scope.active.id, function() {
+                                                    $scope.active.editing = window.builder.statusbar.me;
+                                                    window.tabs.open(window.tabs.active);
+                                                });
+                                            }
+                                        });
+                                        found = true;
+                                    }
+                                });
+                                if (!found) {
+                                    window.tabs.open(window.tabs.active);
+                                }
+                            }
+                        }
                         break;
                     case "msg":
                         $scope.statusbar.msg.push(JSON.parse(content));
@@ -161,25 +246,49 @@ app.controller("Index", function($scope, $http, $timeout, $q) {
     }
     initWs();
 
-    $scope.set = function(key, value, callback) {
+    $scope.wsready = function(f) {
         if (!$scope.ws) {
-            $scope.setStack.push({
-                key: key,
-                value: value,
-                callback: callback
-            });
-            return;
-        }
-        $scope.ws.send('set:' + JSON.stringify({
-            key: $scope.uid + "!" + key,
-            val: value
-        }));
-        if (typeof callback == "function") {
             $timeout(function() {
-                callback();
-            });
+                $scope.wsready(f);
+            }, 500)
+        }
+        else {
+            f();
         }
     }
+
+    $scope.set = function(key, value, callback) {
+        $scope.wsready(function() {
+            if (!$scope.ws) {
+                $scope.setStack.push({
+                    key: key,
+                    value: value,
+                    callback: callback
+                });
+                return;
+            }
+            $scope.ws.send('set:' + JSON.stringify({
+                key: $scope.uid + "!" + key,
+                val: value
+            }));
+            if (typeof callback == "function") {
+                $timeout(function() {
+                    callback();
+                });
+            }
+        });
+    }
+
+    $scope.ask = function(question, content, callback) {
+        $scope.wsready(function() {
+            content = content + "";
+            question = question.replace(/\|/g, '.');
+            content = content.replace(/\|/g, '.');
+            $scope.askStack[question + "|" + content] = callback;
+            $scope.ws.send('ask:' + question + "|" + content);
+        });
+    }
+
     $scope.get = function(key, callback) {
         var url = Yii.app.createUrl('/builder/builder/getstate&key=' + key)
         $http.get(url).then(function(res) {

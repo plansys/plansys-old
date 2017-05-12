@@ -1,17 +1,16 @@
 <?php
 
 class SysModule extends CWebModule {
-
-    public function accessControl($controller,$action) {
+    public function accessControl($controller, $action) {
         
     }
 
     public function init() {
         // import the module-level controllers and forms
-        $this->setImport(array(
+        $this->setImport([
             'application.modules.sys.controllers.*',
             'application.modules.sys.forms.*'
-        ));
+        ]);
     }
     
     
@@ -19,14 +18,14 @@ class SysModule extends CWebModule {
         if (parent::beforeControllerAction($controller, $action)) {
             if (Yii::app()->user->isGuest) {
                 if ($controller->id != 'serviceApi') {
-                    echo "NO GUEST ACCESS";
+                    echo 'NO GUEST ACCESS';
                     die();
                 }
             }
 
             return true;
-        } else
-            return false;
+        } else {             return false;
+        }
     }
 
 }

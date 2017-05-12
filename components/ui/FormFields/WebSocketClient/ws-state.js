@@ -35,9 +35,9 @@ app.directive('webSocketState', function($timeout, $http) {
                                    $timeout(function() {
                                         $scope.config.cid = e.data.split(":")[1];
                                         $scope.sendQueue.forEach(function(item) {
-                                             $scope.sendQueue.shift();
-                                             $scope.executeSend(item.params, item.fn);
+                                             $scope.executeSend(item.params);
                                         });
+                                        $scope.sendQueue = [];
                                         
                                         if (typeof $scope.connectedFunc == 'function') {
                                              $timeout(function(){
@@ -97,22 +97,23 @@ app.directive('webSocketState', function($timeout, $http) {
                     }
                     $scope.initWs();
 
-                    $scope.sendQueue = [];
-                    $scope.send = function(params, fn) {
+                    $scope.send = function(params) {
+                         if (!$scope.sendQueue) {
+                              $scope.sendQueue = [];
+                         }
+                         
                          if ($scope.config.cid) {
                               $scope.sendQueue.push({
-                                   params: params,
-                                   fn: fn
+                                   params: params
                               });
                               $scope.sendQueue.forEach(function(item) {
-                                   $scope.executeSend(item.params, item.fn);
+                                   $scope.executeSend(item.params);
                               });
                               $scope.sendQueue = [];
                          }
                          else {
                               $scope.sendQueue.push({
-                                   params: params,
-                                   fn: fn
+                                   params: params
                               });
                          }
                     }
@@ -136,12 +137,8 @@ app.directive('webSocketState', function($timeout, $http) {
                          $scope.disconnectedFunc = fn;
                     };
                     
-                    $scope.executeSend = function(params, fn) {
+                    $scope.executeSend = function(params) {
                          $scope.ws.send(params);
-                         // $http.post(Yii.app.createUrl('/sys/ws/send', {
-                         //      tid: $scope.config.tid,
-                         //      cid: $scope.config.cid
-                         // }), params)
                     }
 
                     $scope.setTag = function(tag) {

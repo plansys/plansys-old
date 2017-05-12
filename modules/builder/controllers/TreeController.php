@@ -1,7 +1,6 @@
 <?php
 
-function recursiveDelete($str)
-{
+function recursiveDelete($str) {
     if (is_file($str)) {
         return unlink($str);
     } elseif (is_dir($str)) {
@@ -13,12 +12,10 @@ function recursiveDelete($str)
         return rmdir($str);
     }
 }
-class TreeController extends Controller
-{
+class TreeController extends Controller {
     private $getcwdlen = 0;
 
-    private function getcwdlen()
-    {
+    private function getcwdlen() {
         if ($this->getcwdlen == 0) {
             $this->getcwdlen = strlen(getcwd());
         }
@@ -26,25 +23,23 @@ class TreeController extends Controller
         return $this->getcwdlen;
     }
 
-    private function convertProp($file, $override = [])
-    {
+    private function convertProp($file, $override=[]) {
         $type = $file->isDir() ? 'dir' : 'file';
         $item = [
-            'n' => $file->getBasename(),
-            'p' => $file->getPathName(),           
-            'ext' => $file->getExtension(),            
-            'd' => substr($file->getPathname(), $this->getcwdlen() + 1),
-            't' => $type, 
-            'l' => 0, 
-            'id' => crc32($file->getPathname()), 
+        'n' => $file->getBasename(),
+        'p' => $file->getPathName(),           
+        'ext' => $file->getExtension(),            
+        'd' => substr($file->getPathname(), $this->getcwdlen() + 1),
+        't' => $type, 
+        'l' => 0, 
+        'id' => crc32($file->getPathname()), 
         ];
         $item = array_merge($item, $override);
 
         return $item;
     }
 
-    private function search($n, $dir, $ext = "", $abspath = false)
-    {
+    private function search($n, $dir, $ext='', $abspath=false) {
         $dir = '/' . trim($dir, '/');
         
         if (!$abspath) {
@@ -59,8 +54,9 @@ class TreeController extends Controller
             if (stripos($file->getBasename(), $n) === false) {
                 continue;
             }
-            if ($ext != "" && $file->getExtension() != $ext)
+            if ($ext != '' && $file->getExtension() != $ext) {
                 continue;
+            }
                 
             $result[] = $this->convertProp($file);
         }
@@ -68,8 +64,7 @@ class TreeController extends Controller
         return $result;
     }
 
-    public function actionSearch($n = '', $dir = '/', $mode = 'file')
-    {
+    public function actionSearch($n='', $dir='/', $mode='file') {
         $result = [];
         switch ($mode) {
             case 'file':
@@ -83,7 +78,7 @@ class TreeController extends Controller
                 $result = [];
                 foreach ($res as $r) {
                     if ($r['t'] == 'dir' && is_dir($r['p'])) {
-                        $result = array_merge($result, $this->search($n, $r['p'], "php", true));
+                        $result = array_merge($result, $this->search($n, $r['p'], 'php', true));
                     }
                 }
                 break;
@@ -93,8 +88,7 @@ class TreeController extends Controller
         echo json_encode($result);
     }
 
-    public function actionMkdir($dir = '')
-    {
+    public function actionMkdir($dir='') {
         $rootdir = Yii::getPathOfAlias('webroot');
         if (strpos($dir, $rootdir) === 0) {
             @mkdir($dir, 0777, true);
@@ -102,8 +96,7 @@ class TreeController extends Controller
         }
     }
 
-    public function actionTouch($path, $name = '', $mode = '')
-    {
+    public function actionTouch($path, $name='', $mode='') {
         $rootdir = Yii::getPathOfAlias('webroot');
         if (strpos($path, $rootdir) === 0) {
             switch ($mode) {
@@ -129,16 +122,14 @@ class TreeController extends Controller
         }
     }
 
-    public function actionRmrf($path)
-    {
+    public function actionRmrf($path) {
         $rootdir = Yii::getPathOfAlias('webroot');
         if (strpos($path, $rootdir) === 0) {
             recursiveDelete($path);
         }
     }
 
-    public function listDir($dirs, $root)
-    {
+    public function listDir($dirs, $root) {
         $psdir = Yii::getPathOfAlias('application');
 
         return $this->listRaw($dirs, function ($val) use ($psdir, $root) {
@@ -167,8 +158,7 @@ class TreeController extends Controller
         echo @filesize(Setting::getRootpath() . DIRECTORY_SEPARATOR . $dir);
     }
     
-    public function listRaw($list, $func)
-    {
+    public function listRaw($list, $func) {
         $res = [];
         foreach ($list as $l) {
             $modeex = explode(':', $l);
@@ -205,29 +195,28 @@ class TreeController extends Controller
         return $res;
     }
 
-    private function modeDirList($mode, $dir = '')
-    {
+    private function modeDirList($mode, $dir='') {
         switch ($mode) {
             case 'form': if ($dir == '') {
-                $dirs = ['application.forms', 'application.modules.*.forms', 'app.forms', 'app.modules.*.forms'];
+                    $dirs = ['application.forms', 'application.modules.*.forms', 'app.forms', 'app.modules.*.forms'];
             } else {
                 $dirs = ['dir:' . str_replace('/', '.', $dir), 'glob:' . str_replace('/', '.', $dir) . '.*[_]php'];
             }
             break;
             case 'model': if ($dir == '') {
-                $dirs = ['application.models', 'app.models'];
+                    $dirs = ['application.models', 'app.models'];
             } else {
                 $dirs = ['dir:' . str_replace('/', '.', $dir), 'glob:' . str_replace('/', '.', $dir) . '.*[_]php'];
             }
             break;
             case 'controller': if ($dir == '') {
-                $dirs = ['application.controllers', 'application.modules.*.controllers', 'app.controllers', 'app.modules.*.controllers'];
+                    $dirs = ['application.controllers', 'application.modules.*.controllers', 'app.controllers', 'app.modules.*.controllers'];
             } else {
                 $dirs = ['dir:' . str_replace('/', '.', $dir), 'glob:' . str_replace('/', '.', $dir) . '.*[_]php'];
             }
             break;
             case 'module': if ($dir == '') {
-                $dirs = ['application.modules.*.*[_]php', 'app.modules.*.*[_]php'];
+                    $dirs = ['application.modules.*.*[_]php', 'app.modules.*.*[_]php'];
             } else {
                 $dirs = ['glob:' . str_replace('/', '.', $dir) . '.*[_]php'];
             }
@@ -239,8 +228,7 @@ class TreeController extends Controller
         return $dirs;
     }
 
-    public function actionLs($dir = '', $mode = '')
-    {
+    public function actionLs($dir='', $mode='') {
         try {
             if ($mode == 'file') {
                 $result = [];
@@ -270,8 +258,7 @@ class TreeController extends Controller
         }
     }
 
-    public function actionMv($from, $to)
-    {
+    public function actionMv($from, $to) {
         if (file_exists($from) && !file_exists($to)) {
             if ($from == $to) {
                 return;
@@ -285,15 +272,14 @@ class TreeController extends Controller
         throw new CHttpException(403, $from . ' ~> ' . $to);
     }
     
-    private function recurseCopy($src,$dst) { 
+    private function recurseCopy($src, $dst) { 
         $dir = opendir($src); 
         @mkdir($dst); 
-        while(false !== ( $file = readdir($dir)) ) { 
+        while (false !== ( $file = readdir($dir)) ) { 
             if (( $file != '.' ) && ( $file != '..' )) { 
                 if ( is_dir($src . '/' . $file) ) { 
                     $this->recurseCopy($src . '/' . $file,$dst . '/' . $file); 
-                } 
-                else { 
+                } else { 
                     copy($src . '/' . $file,$dst . '/' . $file); 
                 } 
             } 
@@ -301,8 +287,7 @@ class TreeController extends Controller
         closedir($dir); 
     }
     
-    public function actionCp($from, $to)
-    {
+    public function actionCp($from, $to) {
         if (file_exists($from) && !file_exists($to)) {
             if ($from == $to) {
                 return;

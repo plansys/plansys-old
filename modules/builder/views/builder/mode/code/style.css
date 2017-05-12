@@ -1,3 +1,11 @@
+#code-editor {
+    position: absolute;
+    top: 27px;
+    right: 0;
+    bottom: 0;
+    left: 0;
+}
+
 .toolbar {
      flex: 0 0 27px;
      display: flex;
@@ -53,7 +61,8 @@
      font-size: 12px;
      font-weight: bold;
      color: #999;
-     cursor: pointer;
+     padding:0px 6px;
+     cursor: default;
 }
 
 .ace_search {
@@ -67,6 +76,7 @@
 .ace_search_form,
 .ace_replace_form {
      width: 100%;
+     display: flex !important;
      border-radius: 0px !important;
 }
 

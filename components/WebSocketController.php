@@ -57,6 +57,10 @@ class WebSocketController {
                $msg = json_encode($msg);
           }
           
+          if (is_object($to)) {
+               $to = json_decode(json_encode($to), true);
+          }
+          
           $this->wsserver->send($msg, $to);
      }
      

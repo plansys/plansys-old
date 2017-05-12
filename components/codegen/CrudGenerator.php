@@ -1,30 +1,39 @@
 <?php
 
-class FormGenerator extends CComponent {
+class FormGenerator extends CComponent
+{
 
-    public $form = "";
+    public $form = '';
 
-    public function steps() {
+
+    public function steps()
+    {
         return [];
-    }
 
-    public function generate() {
-        
-    }
+    }//end steps()
 
-    public static function listTemplates() {
 
-        $dir = Yii::getPathOfAlias('application.components.codegen.templates');
+    public function generate()
+    {
+
+    }//end generate()
+
+
+    public static function listTemplates()
+    {
+        $dir  = Yii::getPathOfAlias('application.components.codegen.templates');
         $glob = array_slice(scandir($dir), 2);
         $list = [];
         foreach ($glob as $k => $l) {
-            $t = [];
+            $t         = [];
             $t['name'] = $l;
-            $t['icon'] = Asset::publish($dir . "/" . $l . "/icon.png");
-            $list[] = $t;
+            $t['icon'] = Asset::publish($dir.'/'.$l.'/icon.png');
+            $list[]    = $t;
         }
 
         return $list;
-    }
 
-}
+    }//end listTemplates()
+
+
+}//end class

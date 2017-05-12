@@ -4,12 +4,11 @@ if (!class_exists('ContentMode', false)) {
     Yii::import('application.modules.builder.components.ContentMode');
 }
 
-class ModeController extends Controller
-{
+class ModeController extends Controller {
+
     public $enableCsrf = false;
 
-    public function createAction($actionID)
-    {
+    public function createAction($actionID) {
         $controller = explode('.', $actionID);
         if (count($controller) > 1) {
             $action = $controller[1];
@@ -24,7 +23,7 @@ class ModeController extends Controller
                 if (method_exists($ctrl, 'action' . ucfirst($action))) {
                     return new CInlineAction($ctrl, $action);
                 }
-            }
+            } 
         }
         throw new CHttpException('404', 'Action Not Found');
     }

@@ -1,17 +1,15 @@
 <div class="toolbar">
      <div class="line-number" >
           <input type="text" class="input" select-on-click 
-                 ng-click="halo()"
                  ng-keyup="gotoLine(active.code.cursor.row, $event)" 
                  ng-model="active.code.cursor.row">
      </div>
      <div class="separator"></div>
-     <div class="save-btn btn btn-xs btn-default" ng-click="save()">
-          <i class="fa fa-floppy-o" ng-if="!active.loading"></i>
-          <i class="fa fa-refresh fa-spin" ng-if="active.loading"></i>
-     </div>
-     <div  class="status" ng-click="save()">
-          {{ active.code.status }}
+     <div class="status" style="color: {{ getStatusColor(active) }}" 
+          tooltip="{{ getStatusTooltip(active) }}"
+          tooltip-placement="right">
+          <i class="fa {{ getStatusIcon(active) }}"></i>
+          {{ active.code.status }} 
      </div>
      <div class="separator"></div>
 </div>
