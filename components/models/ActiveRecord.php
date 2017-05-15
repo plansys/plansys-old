@@ -1929,13 +1929,14 @@ class ActiveRecord extends CActiveRecord {
                                     unset($attr[$k]);
                                 }
                             }
-
-                            if (array_diff($new, $attr) || array_diff($attr, $new)) {
-                                $model->attributes = $new;
-                                if ($relType == 'CHasOneRelation') {
-                                    $model->{$relForeignKey} = $this->{$pk};
-                                }
-                                $model->save();
+                            if(is_array($new) && is_array($attr)){
+                                if (array_diff($new, $attr) || array_diff($attr, $new)) {
+                                    $model->attributes = $new;
+                                    if ($relType == 'CHasOneRelation') {
+                                        $model->{$relForeignKey} = $this->{$pk};
+                                    }
+                                    $model->save();
+                                }    
                             }
                         } else {
                             $this->loadRelation($rel->name);
