@@ -16,7 +16,6 @@ class FormfieldController extends Controller {
     public $enableCsrf = false;
 
     public function createAction($actionID) {
-        
         $controller = explode(".", $actionID);
         if (count($controller) > 1) {
             $actionID = $controller[1];
