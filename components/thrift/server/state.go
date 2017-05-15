@@ -397,10 +397,14 @@ func (p *StateManagerHandler) use(dbname string) (db *buntdb.DB, success bool) {
 	if state, ok := p.States[dbname]; ok {
 		return state.DB, true
 	} else {
-		statePath := filepath.FromSlash(strings.Join(append(p.Rootdirs, "assets", dbname+".buntdb"), "/"))
-		log.Printf("Opening: " + statePath)
-		stateDB, err := buntdb.Open(statePath)
-		log.Printf(" Opened: " + statePath)
+		if !strings.Contains(dbname, ":memory") {
+			statePath := filepath.FromSlash(strings.Join(append(p.Rootdirs, "assets", dbname+".buntdb"), "/"))
+			log.Printf("Opening: " + statePath)
+			stateDB, err := buntdb.Open(statePath)
+			log.Printf(" Opened: " + statePath)
+		} else {
+			stateDB, err := buntdb.Open(":memory:")
+		}
 		
 		if err == nil {
 			p.States[dbname] = &StateDB{

@@ -51,8 +51,43 @@
           </div>
           <?php endforeach; ?>
      </div>
+     <div class="cant-edit-overlay" ng-if="(!active.editing && list.length > 0) || (!!active && (!canEdit(active) || active.loading))">
+          <div class="cant-edit-box">
+               <span ng-if="builder.statusbar.people && !!active.editing && !editRequest[active.id] && !canEdit(active)">
+                    <center><img src="<?= $this->tabsUri; ?>/icons/sleeping.png"></center>
+                    <div style="margin:10px;">
+                         {{ getPeopleName(active.editing, true) | ucfirst }} 
+                         {{ !canEdit(active) ? 'is now editing this file' : '' }}
+                    </div>
+                    <div ng-click="requestEdit(active)"
+                         class="btn btn-default status-editing-request ">
+                         <i class="fa fa-hand-pointer-o"></i> Take Over
+                    </div>
+               </span>
+               <span ng-if="builder.statusbar.people && !!active.editing && editRequest[active.id]">
+                    <center><img src="<?= $this->tabsUri; ?>/icons/coffee.png"></center>
+                    <div style="margin:10px;">
+                         Taking over edit from {{ getPeopleName(active.editing, true) | ucfirst }}... 
+                    </div>
+               </span>
+               <span ng-if="!active.editing || active.loading || !builder.statusbar.people">
+                    <center><?php include("icons/loading.html"); ?></center>
+                    <div ng-if="!builder.ws || builder.statusbar.people.length == 0">Connecting...</div>
+               </span>
+          </div>
+     </div>
      <div class="status-bar" ng-class="{dark: active.mode == 'code'}">
           <div class="left">
+               <div ng-if="!!active && active.editing" class="status-editing status-item" tooltip="{{ editingTooltip(active) }} ">
+                    <i class="fa {{ editingIcon(active) }} status-editing-icon"></i> 
+                    <span ng-if="!canEdit(active)">
+                         {{ getPeopleName(active.editing, true) | ucfirst }} 
+                         is now editing this file
+                    </span>
+                    <span ng-if="canEdit(active)">
+                          {{ active.p.split("/").pop() }}
+                    </span>
+               </div>
           </div>
           <div class="right">
                <div class="status-people status-item">
@@ -82,7 +117,20 @@
                          </div>
                     </div>
                     <div ng-click="builder.statusbar.chatshow = !builder.statusbar.chatshow" style="user-select:none;">
-                         <i class="fa fa-vcard" style="margin-right:5px;"></i> {{ builder.statusbar.people.length }} connected
+                         
+                         <span ng-if="builder.statusbar.people.length > 0">
+                              <i class="fa fa-vcard" style="margin-right:5px;"></i> 
+                              <span ng-if="builder.statusbar.people.length == 1">
+                                   You are alone
+                              </span>
+                              <span ng-if="builder.statusbar.people.length > 1">
+                                   {{ builder.statusbar.people.length }} connected
+                              </span>
+                         </span>
+                         <span ng-if="builder.statusbar.people.length == 0">
+                              <i class="fa fa-ban" style="margin-right:5px;"></i> 
+                              Disconnected
+                         </span>
                     </div>
                </div>
                <div class="status-connected status-item" 

@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="main">
-	<?php include("_head.php"); ?>
+	<?php $this->includeFile("_head.php"); ?>
 
 	<body ng-controller="MainController">
 		<?php 
-			include("topbar.php");
+			$this->includeFile("topbar.php");
 		?>
 		<main class="main" id="content" ng-cloak>
         		<?php echo $content; ?>

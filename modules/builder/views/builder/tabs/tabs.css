@@ -141,6 +141,46 @@ ul.tabs {
      flex: 1 1 auto;
 }
 
+.content-container > div {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+    overflow: auto;
+}
+
+.cant-edit-overlay {
+     position:absolute;
+     background: rgba(255,255,255,.4);
+     top:31px;
+     right:0px;
+     bottom:25px;
+     left:0px;
+     z-index:150;
+     cursor:pointer;
+     display:flex;
+     flex-direction:column;
+     align-items:center;
+     justify-content:center;
+}
+
+.cant-edit-box {
+     padding:10px;
+     background:white;
+     font-size:15px;
+     text-align:center;
+     border-radius:3px;
+}
+
+
+.cant-edit-box .btn {
+     border-radius:3px !important;
+     border:2px solid orange;
+     color:#333;
+     font-weight:bold;
+}
+
 .status-bar {
      flex: 0 0 26px;
      background: #fff;
@@ -173,6 +213,11 @@ ul.tabs {
      padding: 0px 10px;
 }
 
+.status-bar .status-editing {
+     padding-left: 5px;
+     color: #ccc;
+}
+
 .status-bar .status-connected {
      font-size: 10px;
 }
@@ -203,13 +248,31 @@ ul.tabs {
      display: none;
 }
 
+.status-bar .status-editing {
+     padding-left: 10px;
+     color: #333;
+}
+
+.status-bar.dark .status-editing-request {
+     border-radius: 3px !important;
+     padding: 0px 9px;
+     margin-left: 5px;
+     line-height: 16px;
+}
+
+.status-bar .status-editing-icon {
+     margin: 0px 5px 0px 0px;
+     color: #000;
+}
+
 .status-bar .status-people-chat.show {
-     display:flex !important;
+     display: flex !important;
 }
 
 .status-bar .status-people-chat.peek {
-     opacity:.9;
+     opacity: .9;
 }
+
 .status-people-msg {
      flex: 1;
      display: flex;
@@ -219,7 +282,7 @@ ul.tabs {
 
 .status-people-msg-list {
      flex: 1;
-     overflow-y:scroll;
+     overflow-y: scroll;
 }
 
 .status-people-msg-write {
@@ -239,7 +302,7 @@ ul.tabs {
 }
 
 .status-people-msg-item-name {
-     color:#666;
+     color: #666;
 }
 
 .status-people-msg-item.me {
@@ -260,6 +323,14 @@ ul.tabs {
 .status-bar.dark {
      background: #2f3129;
      border-top: 1px solid #444;
+     color: #fff;
+}
+
+.status-bar.dark .status-editing {
+     color: #ccc;
+}
+
+.status-bar.dark .status-editing-icon {
      color: #fff;
 }
 
@@ -287,7 +358,7 @@ ul.tabs {
 }
 
 .status-bar.dark .status-people-msg-item-name {
-     color:#aaa;
+     color: #aaa;
 }
 
 .status-bar.dark .status-people-msg-write {

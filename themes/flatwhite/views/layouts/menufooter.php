@@ -1,6 +1,5 @@
 <li class="dl-divider"></li>
-<?php
-    echo loopMenuFooter($menu[1]['items']);
+<?php 
     
     function loopMenuFooter($menu){
           $html = '';
@@ -34,6 +33,8 @@
           }
           return $html;
      }
+     
+     echo loopMenuFooter($menu[1]['items']);
 ?>
 
 

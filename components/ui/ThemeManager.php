@@ -1,7 +1,7 @@
 <?php
 
 class ThemeManager extends CThemeManager {
-
+    
     public static function registerCoreScript($excludeScript = []) {
         $ctrl = Yii::app()->controller;
         

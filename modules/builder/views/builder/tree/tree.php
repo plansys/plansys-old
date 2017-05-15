@@ -63,6 +63,26 @@
           oncontextmenu="return false"
           ng-mousedown="cm.active = null;cm.activeIdx = -1;"></div>
      
+     
+     <div class="tree-empty" 
+          ng-if="treebar.loading || treebar.tree[treebar.active].length == 0 || (search.text && search.tree.length == 0)">
+          <br/><br/>
+          <center>
+               <img src="<?= $this->treeUri; ?>/treebar/tree.png" /><br/>
+               <small ng-if="treebar.loading">Loading Tree</small>
+               <small ng-if="!search.text && !treebar.loading">
+                    {{ treebar.active | ucfirst }} is empty<br/>Plant some!
+               </small>
+               <small ng-if="search.text && !search.loading">
+                    {{ treebar.active | ucfirst }} <u><b>{{ search.text }}</b></u>
+                    <br/>not found!
+               </small>
+               <small ng-if="search.text && search.loading">
+                    Searching {{ treebar.active }}s...
+               </small>
+          </center>
+     </div>
+     
      <?php foreach ($this->treebar as $item): ?>
      <div ng-show="!search.text && treebar.active == '<?= $item; ?>'" class="tree" 
           ng-class="{hovered: !!drag.lastHoverItem && drag.lastHoverItem == treebar.root.file}" 
@@ -73,6 +93,8 @@
           <br/><br/><br/>
      </div>
      <?php endforeach; ?>
+     
+     
      <div ng-if="search.text" class="tree search">
           <div ng-repeat="item in search.tree" 
                ng-include="'treeItem'"></div>

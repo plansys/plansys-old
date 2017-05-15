@@ -4,46 +4,52 @@ if (!class_exists('ContentMode', false)) {
     Yii::import('application.modules.builder.components.ContentMode');
 }
 
-class BuilderController extends Controller
-{
+class BuilderController extends Controller {
     public $state;
     public $vpath = 'application.modules.builder.views.builder';
     public $enableCsrf = false;
     public $mode;
-    public $treebar = ['file', 'form', 'model', 'controller', 'module', 'service', 'template'];
+    public $treebar = ['form', 'model', 'controller', 'module', 'file', 'service', 'template'];
 
-    public function getTreeUri()
-    {
+    public function getTabsUri() {
+        return Yii::app()->request->getBaseUrl(true) . '/plansys/modules/builder/views/builder/tabs';
+    }
+                
+    public function getTreeUri() {
         return Yii::app()->request->getBaseUrl(true) . '/plansys/modules/builder/views/builder/tree';
     }
-
-    public function getViewPath()
-    {
+                
+    public function getViewPath() {
         parent::getViewPath();
-
         return Yii::getPathOfAlias($this->vpath);
     }
-
-    public function beforeAction($action)
-    {
+                        
+    public function beforeAction($action) {
         parent::beforeAction($action);
-        $this->state = new State('builder');
-
+        $this->state = new State('builder-tabs');
         return true;
     }
-
-    public function actionIndex()
-    {
+                
+    public function actionIndex() {
         $this->mode = new ContentMode();
+
+        $bc = new State('builder-chat');
+        $all = $bc->getByKey('*');
+        $chat = [];
+        foreach ($all as $msg) {
+            $chat[] = $msg['val'];
+        }
+        
         //# register main builder js
         $this->render('index', [
-            'width' => $this->state->get(Yii::app()->user->id . '!layout.width'),
-            'tree' => [
-                'expand' => $this->state->get(Yii::app()->user->id . '!tree.expand'),
-                'treebar' => [
-                    'active' => $this->state->get(Yii::app()->user->id . '!tree.treebar.active'),
-                ],
-            ],
+        'width' => $this->state->get(Yii::app()->user->id . '!layout.width'),
+        'tree' => [
+        'expand' => $this->state->get(Yii::app()->user->id . '!tree.expand'),
+        'treebar' => [
+        'active' => $this->state->get(Yii::app()->user->id . '!tree.treebar.active'),
+        ],
+        ],
+        'chat' => $chat
         ]);
     }
     
@@ -54,13 +60,11 @@ class BuilderController extends Controller
         }
     }
 
-    public function actionGetstate($key)
-    {
+    public function actionGetstate($key) {
         echo $this->state->get(Yii::app()->user->id . '!' . $key);
     }
     
-    public function actionGetallstate($key)
-    {
+    public function actionGetallstate($key) {
         $result = [];
         $array = $this->state->getByKey(Yii::app()->user->id . '!' . $key);
         if (!is_null($array)) {
@@ -78,8 +82,7 @@ class BuilderController extends Controller
         echo json_encode($result);
     }
 
-    public function actionDelState($key)
-    {
+    public function actionDelState($key) {
         $this->state->del(Yii::app()->user->id . '!' . $key);
     }
     
@@ -89,9 +92,10 @@ class BuilderController extends Controller
         $active = json_decode($this->state->get(Yii::app()->user->id . '!tabs.active'), true);
         $tabs = $this->state->getByKey(Yii::app()->user->id . '!tabs.list.*');
         if (is_array($tabs)) {
-            foreach($tabs as $tab) {
+            foreach ($tabs as $tab) {
                 if (!in_array($tab['val']['id'], $list)) {
                     $this->state->del($tab['key']);
+                    FileManager::close($tab['val']['p']);
                     if ($active['id'] == $tab['val']['id']) {
                         $this->state->del(Yii::app()->user->id . '!tabs.active');
                     }
@@ -106,7 +110,7 @@ class BuilderController extends Controller
         
         $tabs = $this->state->getByKey(Yii::app()->user->id . '!tabs.list.*');
         if (is_array($tabs)) {
-            foreach($tabs as $tab) {
+            foreach ($tabs as $tab) {
                 if (isset($list[$tab['val']['id']])) {
                     $tab['val']['idx'] = $list[$tab['val']['id']];
                     $this->state->set($tab['key'], $tab['val']);

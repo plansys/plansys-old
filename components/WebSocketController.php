@@ -46,11 +46,19 @@ class WebSocketController {
      
      function __construct($wsserver) {
           $this->wsserver = $wsserver;
+          
+          if (method_exists($this, 'init')) {
+               $this->init();
+          }
      }
      
      private function _broadcast($msg, $to = []) {
           if (!is_string($msg)) {
                $msg = json_encode($msg);
+          }
+          
+          if (is_object($to)) {
+               $to = json_decode(json_encode($to), true);
           }
           
           $this->wsserver->send($msg, $to);

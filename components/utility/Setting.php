@@ -455,14 +455,6 @@ class Setting {
                 'class' => 'ext.curl.Curl',
             );
 
-            if ($type == "main" && Setting::getThemePath() != "") {
-                $config['components']['themeManager'] = array(
-                    'basePath' => Setting::getThemePath()
-                );
-
-                $config['theme'] = 'default';
-            }
-
             if (Setting::$mode == 'testing') {
                 $config['components']['request'] = array(
                     'class' => 'CodeceptionHttpRequest'
@@ -471,15 +463,6 @@ class Setting {
         }
 
         return $config;
-    }
-
-    public static function getThemePath() {
-        $themePath = Yii::getPathOfAlias(Setting::get('app.dir')) . DIRECTORY_SEPARATOR . "themes";
-
-        if (is_dir($themePath)) {
-            return Setting::get('app.dir') . "/themes";
-        }
-        return "";
     }
 
     public static function getPlansysDirName() {

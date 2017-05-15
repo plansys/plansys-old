@@ -4,6 +4,7 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
      window.tabs = $scope;
 
      $scope.list = [];
+     $scope.unlist = {};
      $scope.active = null;
      $scope.activeIdx = -1;
      $scope.init = true;
@@ -19,7 +20,6 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
                window.builder.get('tabs.active', function(val) {
                     $scope.list.forEach(function(item) {
                          if (item.id == val) {
-                              console.log(item);
                               $scope.open(item);
                          }
                     });
@@ -34,20 +34,22 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
                     item[i] = it[i];
                }
           }
-          
+
           if (it.code) {
                item.code = {}
                if (it.code.cursor) {
                     item.code.cursor = it.code.cursor;
                }
                if (it.unsaved && it.code.content) {
-                    item.code.content = item.code.content;
+                    if (it.size < 200) {
+                         item.code.content = it.code.content;
+                    }
                }
                if (it.code.status) {
                     item.code.status = it.code.status;
                }
           }
-          
+
           return item;
      }
 
@@ -86,7 +88,12 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
           }, {
                label: "Close All Tabs",
                click: function(item) {
-                    $scope.list.splice(0, $scope.list.length);
+                    var closed = $scope.list.splice(0, $scope.list.length);
+                    closed.forEach(function(citem) {
+                         window.mode[item.mode].close(citem);
+                         $scope.unlist[citem.id] = citem;
+                    });
+
                     $scope.active = null;
                     $scope.updateTabHash();
                     $scope.removeClosedTab();
@@ -94,12 +101,21 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
           }, {
                label: "Close Other Tabs",
                click: function(item) {
-                    $scope.list.splice($scope.cm.activeIdx + 1, $scope.list.length - $scope.cm.activeIdx - 1);
+                    var closed = $scope.list.splice($scope.cm.activeIdx + 1, $scope.list.length - $scope.cm.activeIdx - 1);
+                    closed.forEach(function(citem) {
+                         window.mode[item.mode].close(citem);
+                    });
+
                     if ($scope.activeIdx >= $scope.cm.activeIdx) {
                          $scope.active = $scope.list[$scope.cm.activeIdx];
                     }
 
-                    $scope.list.splice(0, $scope.cm.activeIdx);
+                    var closed = $scope.list.splice(0, $scope.cm.activeIdx);
+                    closed.forEach(function(citem) {
+                         window.mode[item.mode].close(citem);
+                         $scope.unlist[citem.id] = citem;
+                    });
+
                     if ($scope.activeIdx < $scope.cm.activeIdx) {
                          $scope.active = $scope.list[0];
                     }
@@ -109,7 +125,12 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
           }, {
                label: "Close Tabs to the Left",
                click: function(item) {
-                    $scope.list.splice(0, $scope.cm.activeIdx);
+                    var closed = $scope.list.splice(0, $scope.cm.activeIdx);
+                    closed.forEach(function(citem) {
+                         window.mode[item.mode].close(citem);
+                         $scope.unlist[citem.id] = citem;
+                    });
+
                     if ($scope.activeIdx < $scope.cm.activeIdx) {
                          $scope.active = $scope.list[0];
                     }
@@ -119,7 +140,12 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
           }, {
                label: "Close Tabs to the Right",
                click: function(item) {
-                    $scope.list.splice($scope.cm.activeIdx + 1, $scope.list.length - $scope.cm.activeIdx - 1);
+                    var closed = $scope.list.splice($scope.cm.activeIdx + 1, $scope.list.length - $scope.cm.activeIdx - 1);
+                    closed.forEach(function(citem) {
+                         window.mode[item.mode].close(citem);
+                         $scope.unlist[citem.id] = citem;
+                    });
+
                     if ($scope.activeIdx >= $scope.cm.activeIdx) {
                          $scope.active = $scope.list[$scope.cm.activeIdx];
                     }
@@ -150,7 +176,21 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
           if (!item) return "";
           return Yii.app.createUrl('builder/code&f=' + item.d);
      }
+
+     $scope.editRequest = {};
+     $scope.requestEdit = function(item) {
+          if (item) {
+               $scope.editRequest[item.id] = item;
+               // this will send request edit ws to current editor
+               // and then they will send their content, and lock the editor
+               // then they will tell us that we can edit the file
+               window.builder.ask('request-edit', item.id);
+          }
+     }
+
      $scope.itemMouseOut = function(e, item) {
+          if ($(e.target).hasClass("tab-icon-x")) return;
+
           e.preventDefault();
           e.stopPropagation();
           if (!$scope.drag.item) return;
@@ -166,6 +206,8 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
           }
      }
      $scope.itemMouseOver = function(e, item, idx) {
+          if ($(e.target).hasClass("tab-icon-x")) return;
+
           e.preventDefault();
           e.stopPropagation();
           if ($scope.drag.item) {
@@ -179,6 +221,8 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
           }
      }
      $scope.itemMouseDown = function(e, item, idx) {
+          if ($(e.target).hasClass("tab-icon-x")) return;
+
           e.preventDefault();
           e.stopPropagation();
           $scope.drag.inititem = item;
@@ -188,20 +232,31 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
           }
      }
      $scope.itemMouseUp = function(e, item, idx) {
+          if ($(e.target).hasClass("tab-icon-x")) return;
+
           e.preventDefault();
           e.stopPropagation();
 
           if (!$scope.drag.inititem) return;
-
           if (item.id == $scope.drag.inititem.id) {
-               $scope.drag.item = null;
-               $scope.drag.inititem = null;
                switch (e.which) {
                     case 1: // this is left click
+                         if ($scope.drag.item != null) {
+                              $scope.drag.item = null;
+                              $scope.drag.inititem = null;
+
+                              $scope.list.forEach(function(item, idx) {
+                                   var tab = $scope.stripItem(item);
+                                   tab.idx = idx;
+                                   window.builder.set('tabs.list.' + tab.id, tab); // reset tab.idx on open
+                              });
+                         }
                          break;
                     case 2: // this is middle click
                          break;
                     case 3: // this is right click
+                         $scope.drag.item = null;
+                         $scope.drag.inititem = null;
                          $scope.showContextMenu(item, idx, e.clientX, e.clientY);
                          break;
                     default:
@@ -256,16 +311,69 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
           });
      }
 
-     $scope.open = function(item) {
+     $scope.editingTooltip = function(who) {
+          if ($scope.canEdit(who)) {
+               return 'You are now editing this file';
+          }
+     }
+
+     $scope.canEdit = function(who) {
+          if (who.editing) {
+               if (who.editing.cid == window.builder.statusbar.me.cid) {
+                    return true;
+               }
+          }
+          else {
+               return true;
+          }
+          return false;
+     }
+
+     $scope.editingIcon = function(who) {
+          if (who.editing) {
+               if (who.editing.cid == window.builder.statusbar.me.cid) {
+                    return 'fa-pencil';
+               }
+               else {
+                    return 'fa-ban';
+               }
+          }
+     }
+
+     $scope.open = function(item, options) {
           if (!item) return false;
+
+          options = angular.extend({}, {
+               reload: false,
+               content: false
+          }, options);
 
           var idx = $scope.findTab(item);
           if (!!$scope.list[idx]) {
                $scope.active = $scope.list[idx];
           }
           else {
-               $scope.active = item;
+               if ($scope.unlist[item.id]) {
+                    $scope.active = $scope.unlist[item.id];
+                    delete $scope.unlist[item.id];
+               }
+               else {
+                    $scope.active = item;
+               }
           }
+
+          window.builder.ask('who-edit', $scope.active.id, function(user) {
+               var me = window.builder.statusbar.me;
+               user = JSON.parse(user);
+               if (!user.cid) {
+                    window.builder.ask('edit-by-me', $scope.active.id, function() {
+                         $scope.active.editing = window.builder.statusbar.me;
+                    });
+               }
+               else {
+                    $scope.active.editing = user;
+               }
+          });
 
           if (idx === false) {
                $scope.active.loading = true;
@@ -291,15 +399,16 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
                     $scope.active.mode = 'image';
                }
           }
-          window.mode[$scope.active.mode].open($scope.active);
+
+          window.mode[$scope.active.mode].open($scope.active, options);
 
           var tab = $scope.stripItem($scope.active);
           tab.loading = false;
           if (idx) {
                tab.idx = idx;
           }
-          
-          // window.builder.set('tabs.list.' + tab.id, tab); // reset tab.idx on open
+
+          window.builder.set('tabs.list.' + tab.id, tab);
           window.builder.set('tabs.active', tab.id);
      }
      $scope.close = function(item, e) {
@@ -309,22 +418,26 @@ app.controller("Tabs", function($scope, $http, $timeout, $q) {
           }
 
           $scope.findTab(item, function(idx) {
-               $scope.list.splice(idx, 1);
+               var unitem = $scope.list.splice(idx, 1);
+               $scope.unlist[unitem.id] = unitem;
+
                $scope.updateTabHash();
 
-               if ($scope.active && $scope.active.id == item.id) {
-                    window.builder.del('tabs.active');
-                    if ($scope.list[idx]) {
-                         $scope.open($scope.list[idx]);
+               window.builder.ask('close-edit', item.id);
+               window.mode[item.mode].close(item);
+               $timeout(function() {
+                    if ($scope.active && $scope.active.id == item.id) {
+                         window.builder.del('tabs.active');
+                         if ($scope.list[idx]) {
+                              $scope.open($scope.list[idx]);
+                         }
+                         else if ($scope.list[idx - 1]) {
+                              $scope.open($scope.list[idx - 1]);
+                         } else {
+                             $scope.active = null;
+                         }
                     }
-                    else if ($scope.list[idx - 1]) {
-                         $scope.open($scope.list[idx - 1]);
-                    }
-                    else {
-                         $scope.active = null;
-                         window.mode.code.close();
-                    }
-               }
+               });
           });
 
           $scope.removeClosedTab();

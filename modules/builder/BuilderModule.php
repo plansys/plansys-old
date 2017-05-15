@@ -59,26 +59,14 @@ class BuilderModule extends CWebModule {
     public function init() {
         // import the module-level controllers and forms
         $import = array(
-            'application.modules.dev.controllers.*',
-            'application.modules.dev.forms.*',
-            'application.modules.dev.forms.formbuilder.*',
-            'application.modules.dev.forms.formbuilder.crud.*',
-            'application.modules.dev.forms.genctrl.*',
-            'application.modules.dev.forms.genmenu.*',
-            'application.modules.dev.forms.genmodel.*',
-            'application.modules.dev.forms.genmodule.*',
-            'application.modules.dev.forms.service.*',
-            'application.modules.dev.forms.settings.*',
-            'application.modules.dev.forms.settings.js.*',
-            'application.modules.dev.forms.users.*',
-            'application.modules.dev.forms.users.role.*',
-            'application.modules.dev.forms.users.user.*',
-            'application.modules.dev.forms.users.user.js.*'
+            'application.modules.builder.websockets.*',
+            'application.modules.builder.components.*',
+            'application.modules.builder.controllers.*',
         );
         
         
-        if (is_dir(Yii::getPathOfAlias('app.modules.dev.forms.users.user.*'))) {
-            $import[] = 'app.modules.dev.forms.users.user.*';
+        if (is_dir(Yii::getPathOfAlias('app.modules.builder.forms.users.user.*'))) {
+            $import[] = 'app.modules.builder.forms.users.user.*';
         }
         
         // import the module-level models and components

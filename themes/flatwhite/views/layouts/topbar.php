@@ -14,28 +14,19 @@
 		</button>
 		<ul class="dl-menu">
 		     <?php
-		          if(file_exists(Setting::getRootPath() . "/app/theme/flatwhite/menuheader.php")){
-		               include(Setting::getRootPath() . "/app/theme/flatwhite/menuheader.php");
-		          } else {
-		               include('menuheader.php');     
-		          }
+		          $this->includeFile('menuheader.php', [
+		               'menu' => $menu
+		          ]);    
                     echo loopMenu($menu);
-                    if(file_exists(Setting::getRootPath() . "/app/theme/flatwhite/menufooter.php")){
-		               include(Setting::getRootPath() . "/app/theme/flatwhite/menufooter.php");
-		          } else {
-		               include('menufooter.php');     
-		          }
-                    
+		          $this->includeFile('menufooter.php', [
+		               'menu' => $menu
+		          ]);    
                ?>            
 		</ul>
 	</div><!-- /dl-menuwrapper -->
 	<div class="dl-menuleft">
 	     <?php
-     	     if(file_exists(Setting::getRootPath() . "/app/themes/flatwhite/topcontent.php")){
-                    include(Setting::getRootPath() . "/app/themes/flatwhite/topcontent.php");
-               } else {
-                    include('topcontent.php');     
-               }
+               $this->includeFile('topcontent.php', ['menu'=> $menu]);   
 	     ?>
 	</div>
 	<div class="dl-menuright">
