@@ -561,9 +561,10 @@ app.directive('gridView', function($timeout, $http) {
                 var paddingLeft = $el.offset().left;
                 $scope.freezeControlBar = function() {
                     if (!!$scope.gridOptions.freezeControlBar || !!$scope.gridOptions.freeze) {
+                        var w =  ($container.width() - (paddingLeft * 3));
                         $el.find('.data-grid-paging').css({
                             marginLeft: (($el.offset().left * -1) + paddingLeft) + 'px',
-                            width: ($container.width() - (paddingLeft * 3)) + 'px'
+                            width: w === 0 ? 'auto' : w + 'px'
                         });
                     }
                     $scope.isCbFreezed = !!$scope.gridOptions.freezeControlBar || !!$scope.gridOptions.freeze;
