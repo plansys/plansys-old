@@ -196,7 +196,7 @@ class UploadFile extends FormField {
     public $label = "File Upload";
     public $layout = 'Horizontal';
     public $value;
-    public $mode = 'Upload + Browse + Download';
+    public $mode = 'Upload + Download';
     public $filePattern = '';
     public $labelWidth = 4;
     public $fieldWidth = 8;

@@ -15,6 +15,8 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
 
             return function ($scope, $el, attrs, ctrl) {
                 var parent = $scope.getParent($scope);
+                $scope.name = $el.find("data[name=name]:eq(0)").text();
+                parent[$scope.name] = $scope;
 
                 /************* All Filter **************/
                 $scope.toggleFilterCriteria = function (e) {
@@ -999,7 +1001,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                 $scope.datasource = $el.find("data[name=datasource]").text();
                 $scope.datasources = JSON.parse($el.find("data[name=datasources]").html());
 
-                $scope.name = $el.find("data[name=name]:eq(0)").text();
                 $scope.renderID = $el.find("data[name=render_id]").text();
                 $scope.dateOptions = {
                     'show-weeks': false
@@ -1012,7 +1013,6 @@ app.directive('psDataFilter', function ($timeout, dateFilter, $http, $localStora
                     relation: 'filter_dropdown',
                     date: 'filter_date'
                 }
-                parent[$scope.name] = $scope;
                 $scope.available = false;
                 
                 if (!!$scope.options.freeze) {

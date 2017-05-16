@@ -3,15 +3,14 @@ app.directive('gridView', function($timeout, $http) {
         require: '?ngModel',
         scope: true,
         compile: function(element, attrs, transclude) {
-            if (attrs.ngModel && !attrs.ngDelay) {
-                attrs.$set('ngModel', '$parent.' + attrs.ngModel, false);
-            }
             var columnRaw = element.find("data[name=columns]:eq(0)").text();
             element.find("data[name=columns]:eq(0)").remove();
 
             return function($scope, $el, attrs, ctrl) {
                 // define current form field in parent scope
-                $scope.parent = $scope.getParent($scope);
+                var parent = $scope.getParent($scope);
+                $scope.name = $el.find("data[name=name]:eq(0)").html().trim();
+                parent[$scope.name] = $scope;
 
                 // define vars
                 $scope.loading = false;
@@ -19,14 +18,16 @@ app.directive('gridView', function($timeout, $http) {
                 $scope.Math = window.Math;
                 $scope.mode = 'full';
                 $scope.classAlias = $el.find("data[name=class_alias]").html().trim();
-                $scope.name = $el.find("data[name=name]:eq(0)").html().trim();
                 $scope.modelClass = $el.find("data[name=model_class]").text();
                 $scope.renderID = $el.find("data[name=render_id]").text();
                 $scope.gridOptions = JSON.parse($el.find("data[name=grid_options]:eq(0)").text());
                 $scope.columns = JSON.parse(columnRaw);
                 $scope.columnsParams = JSON.parse($el.find("data[name=columnsfp]:eq(0)").text());
                 $scope.defaultPageSize = $el.find("data[name=dpz]:eq(0)").text();
-                $scope.datasource = $scope.parent[$el.find("data[name=datasource]:eq(0)").text()];
+                $scope.datasource = parent[$el.find("data[name=datasource]:eq(0)").text()];
+                
+                
+                
                 $scope.checkboxCol = false;
                 $scope.checkMode = function() {
                     if ($el.width() < 750) {
@@ -1237,7 +1238,6 @@ app.directive('gridView', function($timeout, $http) {
                 }
 
                 $scope.initGrid();
-                $scope.parent[$scope.name] = $scope;
             };
         }
     }

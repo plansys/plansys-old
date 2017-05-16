@@ -6,7 +6,7 @@
         <!-- data -->
         <data name="file_type" class="hide"><?= $this->getFileType(); ?></data>
         <data name="repo_path" class="hide"><?= base64_encode(Setting::get('repo.path')); ?></data>
-        <data name="value" class="hide"><?= $this->value; ?></data>
+        <data name="value" class="hide"><?= is_string($this->value) ? $this->value : json_encode($this->value); ?></data>
         <data name="name" class="hide"><?= $this->name; ?></data>
         <data name="mode" class="hide"><?= $this->mode; ?></data>
         <data name="options" class="hide"><?= json_encode($this->options); ?></data>

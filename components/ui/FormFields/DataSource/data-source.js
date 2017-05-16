@@ -4,12 +4,13 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
         compile: function (element, attrs, transclude) {
             return function ($scope, $el, attrs, ctrl) {
                 var parent = $scope.getParent($scope);
+                $scope.name = $el.find("data[name=name]:eq(0)").text().trim();
+                parent[$scope.name] = $scope;
 
                 $scope.params = JSON.parse($el.find("data[name=params]").text());
                 $scope.paramsGet = JSON.parse($el.find("data[name=params_get]").text());
                 $scope.sqlParams = JSON.parse($el.find("data[name=params_default]").text());
                 $scope.totalItems = $el.find("data[name=total_item]").text();
-                $scope.name = $el.find("data[name=name]:eq(0)").text().trim();
                 $scope.class = $el.find("data[name=class_alias]").text().trim();
                 $scope.postData = $el.find("data[name=post_data]").text().trim();
                 $scope.primaryKey = JSON.parse($el.find("data[name=primary_key]:eq(0)").text().trim());
@@ -104,22 +105,22 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 }
                 
                 $scope.setDebug = function (debug) {
-                    if (typeof debug == "undefined") {
+                    if (typeof debug == "undefined" || !debug) {
                         $scope.debugHTML = "";
                         return true;
                     }
                     $scope.debug = debug;
-                    if ($scope.debug.sql) {
-                        $scope.debug.sql = $scope.debug.sql.replace(/\r/g, '').replace(/\n/g, '');
-                    }
-                    if ($scope.debug.countSQL) {
-                        $scope.debug.countSQL = $scope.debug.countSQL.replace(/\r/g, '').replace(/\n/g, '');
-                    }
                     if ($scope.debug.function) {
                         $scope.debug.function = $scope.debug.function.replace(/\r/g, '').replace(/\n/g, '');
                     }
                     if ($scope.debug.countFunction) {
                         $scope.debug.countFunction = $scope.debug.countFunction.replace(/\r/g, '').replace(/\n/g, '');
+                    }
+                    
+                    $scope.debugSQL = [];
+                    if ($scope.debug.sql) {
+                        $scope.debugSQL = $scope.debug.sql;
+                        delete $scope.debug.sql;
                     }
                     $scope.debugHTML = JSON.stringify($scope.debug, undefined, 2);
                 };
@@ -467,8 +468,12 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 if ($scope.postData == 'Yes') {
                     $scope.resetOriginal();
                     $scope.$watch('data', function (newval, oldval) {
+                        if (oldval.length > newval.length) {
+                            console.log(oldval, newval);
+                            throw 'test';
+                        }
                         if (!$scope.data || $scope.data === null) {
-                            $scope.data = [];
+                            $scope.data = []; 
                         }
                         if (angular.equals($scope.original, newval)) {
                             for (var i in newval) {
@@ -535,7 +540,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                     },true);
                 }
 
-                parent[$scope.name] = $scope;
             }
 
         }

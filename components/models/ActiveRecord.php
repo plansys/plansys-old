@@ -882,7 +882,7 @@ class ActiveRecord extends CActiveRecord {
         return new ActiveFinder($this, $with);
     }
 
-    public function getRelatedArray($criteria = [], $rel = null) {
+    public function getRelatedArray($criteria = [], $rel = null, $returnCdbCommand = false) {
         $criteria          = ActiveRecord::convertPagingCriteria($criteria);
         $tableSchema       = $this->tableSchema;
         $builder           = $this->commandBuilder;
@@ -902,9 +902,15 @@ class ActiveRecord extends CActiveRecord {
         $command = $builder->createFindCommand($tableSchema, $cdbCriteria);
         $sql     = $command->text;
 
+        if ($returnCdbCommand) {
+            return $command;
+        }
+        
         ## execute query
-        $rawData = $this->dbConnection->createCommand($sql)->queryAll(true, $cdbCriteria->params);
-
+        $command = $this->dbConnection->createCommand($sql);
+        $command->bindValues($cdbCriteria->params);
+        $rawData = $command->queryAll(true);
+        
         ## aggregate
         if (isset($criteriaAggregate)) {
             $this->processAggregate($rawData, $criteriaAggregate, $tableSchema, $cdbCriteria);

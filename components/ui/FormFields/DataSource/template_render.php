@@ -33,6 +33,8 @@
         <?php endif; ?>
         <data name="debug" class="hide"><?= json_encode($this->data['debug']); ?></data>
         <pre ng-bind-html="debugHTML"></pre>
+        <div ng-repeat="d in debugSQL" ng-bind-html="d" class="col-md-6" style="margin:-10px 0px 0px -15px;"></div>
+        <div ng-if="debugSQL" class="clearfix"></div>
     <?php endif; ?>
     <div class="error" style="display:none;">
         <div style="position:absolute;color:red;top:0px;padding:10px;
