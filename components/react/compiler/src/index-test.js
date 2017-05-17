@@ -12,19 +12,18 @@ var uiReady = function(f) {
 uiReady(function() {
      setTimeout(function() {
           window.ui.render(function(h) {
-               return h('p > div', [
+               return h('pdiv', [
                     'wadadsa'
                ]);
           });
      }, 500);
 
      setTimeout(function() {
-          console.log(window.ui);
           window.ui.render(function(h) {
                return h('div', [
                     'wadadsa',
                     h('Hello', 'World'),
-                    h('Rusak', 'Tenis'),
+                    h('Hello_Jon', 'Tenis'),
                     h('div', [
                          h('Rusak', 'Tenis'),
                     ])

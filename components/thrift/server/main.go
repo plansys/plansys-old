@@ -14,9 +14,9 @@ import (
 	"git.apache.org/thrift.git/lib/go/thrift"
 	"github.com/VividCortex/godaemon"
 	"github.com/cleversoap/go-cp"
-	"github.com/plansys/single"
 	"github.com/plansys/psthrift/state"
 	"github.com/plansys/psthrift/svc"
+	"github.com/plansys/single"
 	"github.com/tidwall/buntdb"
 )
 

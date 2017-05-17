@@ -6,7 +6,7 @@ class CollabWs extends WebSocketController {
     
     public function init() {
         $this->bc = new State("builder-chat");
-        $this->bt = new State("builder-tabs");
+        $this->bt = new State("builder-tabs:memory");
     }
     
     // this function will be executed when 
@@ -76,6 +76,9 @@ class CollabWs extends WebSocketController {
                 $this->broadcast('you-can-edit:' . json_encode($e), $editor);
                 $this->answer($question, $content, 'ok', $from);
             case "close-edit":
+                $file = json_decode($this->bt->get($from['uid'] . '!tabs.list.' . $content), true);
+                FileManager::close($file['p']);
+                $this->bt->del($from['uid'] . '!tabs.list.' . $content);
                 $this->bt->del('editing|' . $content);
                 $this->answer($question, $content, "ok", $from);
                 $this->broadcast('people:' . json_encode($this->getClients(

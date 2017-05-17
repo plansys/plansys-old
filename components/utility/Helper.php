@@ -383,8 +383,13 @@ class Helper {
     public static function endsWith($haystack, $needle, $case = false) {
         if ($case)
             return strcasecmp(substr($haystack, strlen($haystack) - strlen($needle)), $haystack) == 0;
-        else
-            return strpos($haystack, $needle, strlen($haystack) - strlen($needle)) !== false;
+        else {
+            if (strlen($needle) > strlen($haystack)) {
+                return false;
+            } else {
+                return strpos($haystack, $needle, strlen($haystack) - strlen($needle)) !== false;
+            }
+        }
     }
 
     public static function is_assoc($arr) {

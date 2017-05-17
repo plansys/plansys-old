@@ -3,6 +3,8 @@ class FileManager extends CComponent {
      
      public static function read($path) {
           $state = new State("builder-code:memory");
+          $path = realpath($path);
+          
           $content = $state->get($path);
           
           if (is_null($content)) {
@@ -14,14 +16,18 @@ class FileManager extends CComponent {
      }
      
      public static function write($path, $content) {
-          $state = new State("builder-code");
+          $state = new State("builder-code:memory");
+          $path = realpath($path);
+          
           $state->set($path, $content);
           
           file_put_contents($path, $content);
      }
      
      public function close($path) {
-         $state = new State('builder-code');
-         $state->del($path);
+          $state = new State('builder-code:memory');
+          $path = realpath($path);
+          
+          $state->del($path);
      }
 }

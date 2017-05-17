@@ -175,10 +175,10 @@ func NewStateManagerHandler(addr string, rootdirs []string) *StateManagerHandler
 						yiic[3] = "--uid=" + *sm.Clients[conn].Uid
 						yiic[4] = "--sid=" + *sm.Clients[conn].Sid
 						yiic[5] = "--cid=" + *sm.Clients[conn].Cid
-						
+
 						log.Println("Received:", fmt.Sprintf("%s", msg))
 						sm.SilentYiic(msg, yiic...)
-	
+
 						if err != nil {
 							log.Println(err)
 							return
@@ -224,7 +224,7 @@ func NewStateManagerHandler(addr string, rootdirs []string) *StateManagerHandler
 	return sm
 }
 
-func (p *StateManagerHandler) SilentYiic(stdin []byte,params ...string) {
+func (p *StateManagerHandler) SilentYiic(stdin []byte, params ...string) {
 	p.Yiic(false, stdin, params...)
 }
 
@@ -241,12 +241,11 @@ func (p *StateManagerHandler) Yiic(returnOutput bool, stdin []byte, params ...st
 	yiic := base + sep + "yiic.php"
 	php := getPhpPath()
 
-	
 	params = append([]string{yiic}, params...)
 	cmd := exec.Command(php, params...)
 	var out bytes.Buffer
 	cmd.Stdout = &out
-	
+
 	if stdin != nil {
 		in := bytes.NewReader(stdin)
 		cmd.Stdin = in
@@ -284,11 +283,11 @@ func (p *StateManagerHandler) SetTag(client *state.Client, tag string) (err erro
 	}
 
 	for conn, val := range p.Clients {
-		if (val.Tid == nil) {
+		if val.Tid == nil {
 			delete(p.Clients, conn)
 			continue
 		}
-		
+
 		if client.Tid != nil && client.Uid != nil && client.Sid != nil && client.Cid != nil {
 			if val.Tid != nil && val.Uid != nil && val.Sid != nil && val.Cid != nil {
 				if *client.Tid == *val.Tid && *client.Uid == *val.Uid && *client.Sid == *val.Sid && *client.Cid == *val.Cid {
@@ -303,12 +302,12 @@ func (p *StateManagerHandler) SetTag(client *state.Client, tag string) (err erro
 func (p *StateManagerHandler) GetClients(to *state.Client) (clients []*state.Client, err error) {
 
 	for conn, val := range p.Clients {
-		
-		if (val.Tid == nil) {
+
+		if val.Tid == nil {
 			delete(p.Clients, conn)
 			continue
 		}
-		
+
 		if *to.Tag != "" {
 			if glob.Glob(*to.Tag, *val.Tag) {
 				clients = append(clients, val)
@@ -346,13 +345,13 @@ func (p *StateManagerHandler) GetClients(to *state.Client) (clients []*state.Cli
 }
 
 func (p *StateManagerHandler) Send(to *state.Client, message string) (err error) {
-	
+
 	for conn, val := range p.Clients {
-		if (val.Tid == nil) {
+		if val.Tid == nil {
 			delete(p.Clients, conn)
 			continue
 		}
-		
+
 		if *to.Tag != "" {
 			if glob.Glob(*to.Tag, *val.Tag) {
 				conn.WriteMessage(websocket.TextMessage, []byte(message))
@@ -402,20 +401,32 @@ func (p *StateManagerHandler) use(dbname string) (db *buntdb.DB, success bool) {
 			log.Printf("Opening: " + statePath)
 			stateDB, err := buntdb.Open(statePath)
 			log.Printf(" Opened: " + statePath)
+
+			if err == nil {
+				p.States[dbname] = &StateDB{
+					DB:      stateDB,
+					Indexes: make(map[string]string),
+				}
+				return p.States[dbname].DB, true
+			} else {
+				log.Println(err)
+				return nil, false
+			}
 		} else {
 			stateDB, err := buntdb.Open(":memory:")
-		}
-		
-		if err == nil {
-			p.States[dbname] = &StateDB{
-				DB:      stateDB,
-				Indexes: make(map[string]string),
+
+			if err == nil {
+				p.States[dbname] = &StateDB{
+					DB:      stateDB,
+					Indexes: make(map[string]string),
+				}
+				return p.States[dbname].DB, true
+			} else {
+				log.Println(err)
+				return nil, false
 			}
-			return p.States[dbname].DB, true
-		} else {
-			log.Println(err)
-			return nil, false
 		}
+
 	}
 }
 

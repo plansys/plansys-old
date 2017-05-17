@@ -8,7 +8,7 @@ import h from 'react-hyperscript';
 import Page from './Page';
 
 window.ui = {
-    list: ['Hello', 'Rusak'],
+    list: window.UIELEMENTS,
     loading: {},
     loaded: {},
     content: null,
@@ -32,7 +32,8 @@ window.ui = {
         
         // helper function to execute the actual import component 
         const importer = (tag) => {
-            return import (`./ui/${tag}/index.js`)
+            var etag = tag.replace(/_/g, '/');
+            return import (/* webpackChunkName: tag */ `./ui/${etag}/index.js`)
                 .then((res) => {
                     return res.default
                 })
@@ -88,6 +89,7 @@ window.ui = {
 }
 
 const render = () => {
+    console.log('rendered');
     window.ui.reactdom = ReactDOM.render(
         <AppContainer>
             <Page content={ window.ui.content } />

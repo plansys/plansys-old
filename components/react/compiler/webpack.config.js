@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const production = process.env.NODE_ENV == 'production';
 const rimraf = require('rimraf');
+const fs = require("fs");
 
 var cwdir = __dirname.split(path.sep);
 var uidir = cwdir.splice(0, cwdir.length - 1);
@@ -42,21 +43,65 @@ else {
 const output = {
      filename: 'bundle.js',
      path: uidir,
-     publicPath: '/'
+     publicPath: 'http://p.plansys.co:8080/yourapp',
 };
 
 if (production) {
-     output.filename = '[name]_[chunkHash:5].min.js'
+     output.filename = '[name]_[chunkHash:5].min.js';
+     output.chunkFilename = '[name]_[chunkHash:5].min.js';
      output.publicPath = '';
 }
 
+/************************* GET UI ELEMENT LIST ****************************/
+
+function listDir(dir, fn) {
+     function flatten(lists) {
+          return lists.reduce(function(a, b) {
+               return a.concat(b);
+          }, []);
+     }
+
+     function getDirectories(srcpath) {
+          return fs.readdirSync(srcpath)
+               .map(file => path.join(srcpath, file))
+               .filter(path => fs.statSync(path).isDirectory());
+     }
+
+     function getDirectoriesRecursive(srcpath) {
+          return [srcpath, ...flatten(getDirectories(srcpath).map(getDirectoriesRecursive))];
+     }
+
+     return fn(getDirectoriesRecursive(dir));
+}
+const uieldir = path.resolve(__dirname, 'src', 'ui');
+const uielements = [];
+listDir(uieldir, (res) => {
+     return res.map((d) => {
+          var el = d.substr(uieldir.length + 1);
+          if (!!el) {
+               var re = new RegExp(path.sep, "g");
+               uielements.push((el).replace(re, '_'));
+          }
+     })
+});
+
+
 /************************* DEFINE PLUGIN ****************************/
+
 const plugins = [];
 plugins.push(
      new webpack.DefinePlugin({
-          'PRODUCTION': production
+          'PRODUCTION': production,
+          'window.UIELEMENTS': JSON.stringify(uielements)
      })
 );
+plugins.push(
+     new HtmlWebpackPlugin({
+          inject: true,
+          filename: 'index.html',
+          template: 'index.html'
+     })
+)
 
 if (production) {
      plugins.push(
@@ -64,13 +109,6 @@ if (production) {
      );
 }
 else {
-     plugins.push(
-          new HtmlWebpackPlugin({
-               inject: true,
-               filename: 'index.html',
-               template: 'index.html'
-          })
-     )
      plugins.push(new webpack.HotModuleReplacementPlugin());
 }
 /************************** DEV SERVER *****************************/
