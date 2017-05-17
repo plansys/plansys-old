@@ -66,7 +66,7 @@ class DataSource extends FormField {
      * @param string $sql parameter query yang akan di-execute
      * @return mixed me-return array kosong jika parameter $sql == "", jika tidak maka akan me-return array data hasil execute SQL
      */
-    public function query($params = []) {
+    public function query($params = [], $debug = false) {
         $paramDefs = $params;
         $params    = array_merge($params, $this->queryParams);
 
@@ -80,6 +80,11 @@ class DataSource extends FormField {
         $this->command = $db->createCommand($template['sql']);
         $data          = $this->command->queryAll(true, $template['params']);
 
+
+        if ($debug) {
+            $template['sql'] = [SqlFormatter::format($template['sql'])];
+        }
+        
         ## if should count, then count..
         if ($this->lastCount == 0) {
             if ($this->enablePaging == 'Yes') {
@@ -92,7 +97,9 @@ class DataSource extends FormField {
                 } else {
                     $count = 0;
                 }
-                $template['countSQL'] = $tc['sql'];
+                if ($debug) {
+                    array_unshift($template['sql'], SqlFormatter::format($tc['sql']));
+                }
             } else {
                 $count = count($data);
             }
@@ -105,7 +112,8 @@ class DataSource extends FormField {
 
         $template['count']     = $count;
         $template['timestamp'] = date('Y-m-d H:i:s');
-
+        
+        
         ## return data
         return [
             'data'  => $data,
@@ -779,6 +787,7 @@ class DataSource extends FormField {
     }
 
     public function actionQuery() {
+        
         $postdata        = file_get_contents("php://input");
         $post            = CJSON::decode($postdata);
         $class           = Helper::explodeLast(".", $post['class']);
@@ -801,6 +810,7 @@ class DataSource extends FormField {
             $this->attributes  = $field;
             $this->builder     = $fb;
             $this->queryParams = (is_array(@$post['params']) ? @$post['params'] : []);
+            
             if (@$post['df'] != '') {
                 $this->dataFilter = $fb->findField(['name' => $post['df']]);
                 if (isset($this->queryParams['where'])) {
@@ -837,17 +847,19 @@ class DataSource extends FormField {
             if (is_string($this->params)) {
                 $this->params = [];
             }
+            
+            $debug =  $this->debugSql == 'Yes';
 
             if ($this->postData == 'No' || $this->relationTo == '' || $this->relationTo == '-- NONE --') {
                 ## without relatedTo
                 $this->prepareGeneratedParams();
                 switch ($this->fieldType) {
                     case "sql":
-                        $data      = $this->query($this->params);
+                        $data      = $this->query($this->params,$debug);
                         break;
                     case "phpsql":
                         $this->sql = $this->execute($this->params);
-                        $data      = $this->query($this->params);
+                        $data      = $this->query($this->params, $debug);
                         break;
                     case "php":
                         $data      = $this->execute($this->params);
@@ -1014,7 +1026,7 @@ class DataSource extends FormField {
         }
 
 
-        $rawData = $this->model->{$this->relationTo}($criteria, false);
+        $rawData = $this->model->loadRelation($this->relationTo, $criteria, false);
 
         ## cleanup rawData from relation
         // foreach ($rawData as $dataIdx=>$data) {
@@ -1048,14 +1060,27 @@ class DataSource extends FormField {
                 }
             }
         }
-
-
+        
+        $slog = [];
+        if ($this->debugSql == 'Yes') {
+            $logger=Yii::getLogger();
+            foreach ($logger->logs as $log) {
+                if ($log[1] == 'profile' && $log[2] == 'system.db.CDbCommand.query') {
+                    if (strpos($log[0], 'begin:') === 0) {
+                        $l = explode('<|#-SEPARATOR-#|>', $log[0]);
+                        $slog[] = SqlFormatter::format(trim($l[1]));
+                    }
+                }
+            }
+        }
+        
         $data = [
             'data'  => $rawData,
             'debug' => [
                 'count'  => $count,
                 'params' => $postedParams,
                 'debug'  => $criteria,
+                'sql' => $slog
             ],
             'rel'   => [
                 'insert_data' => $relChanges['insert'],

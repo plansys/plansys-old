@@ -23,16 +23,33 @@
 
     <?php if ($this->debugSql == 'Yes'): ?>
         <pre style="margin:20px 0px -7px 0px;font-weight:bold;"><i class="fa fa-database"></i> <?php echo $this->name; ?> Debug:</pre>
-        <?php if (isset($this->data['debug']['sql'])): ?>
-            <div style="margin-bottom:-16px">
-                <?php
-                echo $this->data['debug']['sql'];
-                unset($this->data['debug']['sql']);
-                ?>
-            </div>
-        <?php endif; ?>
+        <?php 
+        $sql = [];
+        if (isset($this->data['debug']['sql'])) {
+            $sql = $this->data['debug']['sql'];
+            unset($this->data['debug']['sql']);
+        } ?>
         <data name="debug" class="hide"><?= json_encode($this->data['debug']); ?></data>
         <pre ng-bind-html="debugHTML"></pre>
+        <div class="row">
+        <?php
+            if (!is_array($sql)) {
+                $sql = [$sql];
+            }
+            
+            foreach ($sql as $k=>$s) {
+                $no = $k +1;
+                if ($k > 1 && $k % 3 == 0) {
+                    echo '<div class="clearfix"></div>';
+                }
+                $s = str_replace('<pre style="', '<pre style="font-size:11px;', $s);
+                echo <<<EOF
+            <div class="col-md-4" style="font-size:12px">Query #{$no}:<br/>{$s}</div>
+EOF;
+            }
+        ?>
+        </div>
+        <div ng-if="debugSQL" class="clearfix"></div>
     <?php endif; ?>
     <div class="error" style="display:none;">
         <div style="position:absolute;color:red;top:0px;padding:10px;
