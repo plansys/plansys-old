@@ -176,7 +176,7 @@ func NewStateManagerHandler(addr string, rootdirs []string) *StateManagerHandler
 						yiic[4] = "--sid=" + *sm.Clients[conn].Sid
 						yiic[5] = "--cid=" + *sm.Clients[conn].Cid
 
-						log.Println("Received:", fmt.Sprintf("%s", msg))
+						// log.Println("Received:", fmt.Sprintf("%s", msg))
 						sm.SilentYiic(msg, yiic...)
 
 						if err != nil {
