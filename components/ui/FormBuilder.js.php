@@ -287,6 +287,11 @@ ob_start();
             <?= implode("\n            ", explode("\n", $inlineJS)); ?>
         }
 
+        function inlineJS2() {
+            $("div[ng-controller=<?= $modelClass ?>Controller]").css('opacity', 1);
+            <?= implode("\n            ", explode("\n", @$inlineJS2)); ?>
+        }
+        
         // Service related JS
         $scope.service = {
             services: {},
@@ -414,6 +419,7 @@ ob_start();
                 }, true);
             } else {
                 inlineJS();
+                inlineJS2();
             }
         });
     });

@@ -279,11 +279,11 @@ class Installer {
         $file = file_get_contents($path);
 
         $file = str_replace([
-            '$mode = "init"',
-            '$mode = "install"',
-            '$mode = "running"'
+            '$mode = "init"', '$mode = \'init\'',
+            '$mode = "install"', '$mode = \'install\'',
+            '$mode = "running"', '$mode = \'running\'',
                 ], '$mode = "' . $mode . '"', $file);
-
+        
         Setting::$mode = $mode;
         
         if (!is_file($path)) {

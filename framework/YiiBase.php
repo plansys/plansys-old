@@ -216,9 +216,8 @@ class YiiBase
 		else
 			$object=new $type;
 
-		foreach($config as $key=>$value) {
+		foreach($config as $key=>$value)
 			$object->$key=$value;
-		}
 
 		return $object;
 	}
@@ -454,6 +453,7 @@ class YiiBase
 	 */
 	public static function trace($msg,$category='application')
 	{
+		
 		if(YII_DEBUG)
 			self::log($msg,CLogger::LEVEL_TRACE,$category);
 	}
@@ -469,6 +469,7 @@ class YiiBase
 	 */
 	public static function log($msg,$level=CLogger::LEVEL_INFO,$category='application')
 	{
+		
 		if(self::$_logger===null)
 			self::$_logger=new CLogger;
 		if(YII_DEBUG && YII_TRACE_LEVEL>0 && $level!==CLogger::LEVEL_PROFILE)
@@ -485,6 +486,7 @@ class YiiBase
 				}
 			}
 		}
+		
 		self::$_logger->log($msg,$level,$category);
 	}
 

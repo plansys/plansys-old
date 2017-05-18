@@ -78,16 +78,16 @@
         },
         {
             "name": "inlinestyle/inlinestyle",
-            "version": "1.2.6",
+            "version": "1.2.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/christiaan/InlineStyle.git",
-                "reference": "ed9e0a7bf38e6c1e11ce4c6d3d73b857d4fef7d2"
+                "reference": "66ad09318c9f120cc3246d4f1c728848258154b5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/christiaan/InlineStyle/zipball/ed9e0a7bf38e6c1e11ce4c6d3d73b857d4fef7d2",
-                "reference": "ed9e0a7bf38e6c1e11ce4c6d3d73b857d4fef7d2",
+                "url": "https://api.github.com/repos/christiaan/InlineStyle/zipball/66ad09318c9f120cc3246d4f1c728848258154b5",
+                "reference": "66ad09318c9f120cc3246d4f1c728848258154b5",
                 "shasum": ""
             },
             "require": {
@@ -121,7 +121,7 @@
                 "email",
                 "inline"
             ],
-            "time": "2015-12-11 12:04:11"
+            "time": "2015-12-13 20:30:25"
         },
         {
             "name": "nikic/php-parser",

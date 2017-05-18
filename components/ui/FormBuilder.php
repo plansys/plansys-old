@@ -1256,7 +1256,15 @@ EOF;
         } else {
             $inlineJS = '';
         }
-
+        
+        $inlineJSPath2 = dirname($reflector->getFileName()) . DIRECTORY_SEPARATOR . @$this->form['inlineJS2'];
+        if (isset($this->form['inlineJS2']) && is_file($inlineJSPath2)) {
+            $tab      = '            ';
+            $inlineJS2 = file($inlineJSPath2);
+            $inlineJS2 = $tab . implode($tab, $inlineJS2);
+        } else {
+            $inlineJS2 = '';
+        }
         $script = include("FormBuilder.js.php");
         return $script;
     }

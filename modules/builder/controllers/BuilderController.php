@@ -5,7 +5,7 @@ if (!class_exists('ContentMode', false)) {
 }
 
 class BuilderController extends Controller {
-    public $state;
+    public $bt;
     public $vpath = 'application.modules.builder.views.builder';
     public $enableCsrf = false;
     public $mode;
@@ -26,7 +26,7 @@ class BuilderController extends Controller {
                         
     public function beforeAction($action) {
         parent::beforeAction($action);
-        $this->state = new State('builder-tabs');
+        $this->bt = new State('builder-tabs:memory');
         return true;
     }
                 
@@ -42,14 +42,14 @@ class BuilderController extends Controller {
         
         //# register main builder js
         $this->render('index', [
-        'width' => $this->state->get(Yii::app()->user->id . '!layout.width'),
-        'tree' => [
-        'expand' => $this->state->get(Yii::app()->user->id . '!tree.expand'),
-        'treebar' => [
-        'active' => $this->state->get(Yii::app()->user->id . '!tree.treebar.active'),
-        ],
-        ],
-        'chat' => $chat
+            'width' => $this->bt->get(Yii::app()->user->id . '!layout.width'),
+            'tree' => [
+                'expand' => $this->bt->get(Yii::app()->user->id . '!tree.expand'),
+                'treebar' => [
+                    'active' => $this->bt->get(Yii::app()->user->id . '!tree.treebar.active'),
+                ],
+            ],
+            'chat' => $chat
         ]);
     }
     
@@ -61,12 +61,12 @@ class BuilderController extends Controller {
     }
 
     public function actionGetstate($key) {
-        echo $this->state->get(Yii::app()->user->id . '!' . $key);
+        echo $this->bt->get(Yii::app()->user->id . '!' . $key);
     }
     
     public function actionGetallstate($key) {
         $result = [];
-        $array = $this->state->getByKey(Yii::app()->user->id . '!' . $key);
+        $array = $this->bt->getByKey(Yii::app()->user->id . '!' . $key);
         if (!is_null($array)) {
             foreach ($array as $item) {
                 $result[] = $item['val'];
@@ -83,21 +83,21 @@ class BuilderController extends Controller {
     }
 
     public function actionDelState($key) {
-        $this->state->del(Yii::app()->user->id . '!' . $key);
+        $this->bt->del(Yii::app()->user->id . '!' . $key);
     }
     
     public function actionRemoveClosedTab() {
         $post = file_get_contents('php://input');
         $list = json_decode($post);
-        $active = json_decode($this->state->get(Yii::app()->user->id . '!tabs.active'), true);
-        $tabs = $this->state->getByKey(Yii::app()->user->id . '!tabs.list.*');
+        $active = json_decode($this->bt->get(Yii::app()->user->id . '!tabs.active'), true);
+        $tabs = $this->bt->getByKey(Yii::app()->user->id . '!tabs.list.*');
         if (is_array($tabs)) {
             foreach ($tabs as $tab) {
                 if (!in_array($tab['val']['id'], $list)) {
-                    $this->state->del($tab['key']);
+                    $this->bt->del($tab['key']);
                     FileManager::close($tab['val']['p']);
                     if ($active['id'] == $tab['val']['id']) {
-                        $this->state->del(Yii::app()->user->id . '!tabs.active');
+                        $this->bt->del(Yii::app()->user->id . '!tabs.active');
                     }
                 }
             }
@@ -108,12 +108,12 @@ class BuilderController extends Controller {
         $post = file_get_contents('php://input');
         $list = json_decode($post, true);
         
-        $tabs = $this->state->getByKey(Yii::app()->user->id . '!tabs.list.*');
+        $tabs = $this->bt->getByKey(Yii::app()->user->id . '!tabs.list.*');
         if (is_array($tabs)) {
             foreach ($tabs as $tab) {
                 if (isset($list[$tab['val']['id']])) {
                     $tab['val']['idx'] = $list[$tab['val']['id']];
-                    $this->state->set($tab['key'], $tab['val']);
+                    $this->bt->set($tab['key'], $tab['val']);
                 }
             }
         }
