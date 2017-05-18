@@ -468,10 +468,6 @@ app.directive('psDataSource', function ($timeout, $http, $q) {
                 if ($scope.postData == 'Yes') {
                     $scope.resetOriginal();
                     $scope.$watch('data', function (newval, oldval) {
-                        if (oldval.length > newval.length) {
-                            console.log(oldval, newval);
-                            throw 'test';
-                        }
                         if (!$scope.data || $scope.data === null) {
                             $scope.data = []; 
                         }
