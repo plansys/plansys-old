@@ -852,7 +852,7 @@ class ActiveRecord extends CActiveRecord {
             if (isset($criteria['aggregate'])) {
                 $criteriaAggregate = $criteria['aggregate'];
                 unset($criteria['aggregate']);
-                $cdbCriteria       = new CDbCriteria($criteria);
+                $cdbCriteria       = new CDbCriteria($this->convertPagingCriteria($criteria));
                 $tableSchema       = $tableModel->metadata->tableSchema;
                 $this->processAggregate($this->__relations[$name], $criteriaAggregate, $tableSchema, $cdbCriteria);
             }
