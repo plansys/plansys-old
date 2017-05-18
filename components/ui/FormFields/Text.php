@@ -127,17 +127,19 @@ style=\"width:100%;height:300px;margin-bottom:-250px;position: relative !importa
         ];
 
         ob_start();
-        if (strpos($this->value, "<?") !== false) {
-            $model      = $this->model;
-            $controller = Yii::app()->controller;
-
-            $attrs = $this->renderParams;
-            $params = $this->builder->renderOptions['params'];
-            extract($attrs);
-
-            eval('?>' . $this->value);
-        } else {
-            echo $this->value;
+        if(!is_array($this->value)){
+            if (strpos($this->value, "<?") !== false) {
+                $model      = $this->model;
+                $controller = Yii::app()->controller;
+    
+                $attrs = $this->renderParams;
+                $params = $this->builder->renderOptions['params'];
+                extract($attrs);
+    
+                eval('?>' . $this->value);
+            } else {
+                echo $this->value;
+            }    
         }
         return ob_get_clean();
     }

@@ -528,7 +528,7 @@ html;
         foreach ($fields as $k => $f) {
             if (is_array($f)) {
                 $field = new $f['type'];
-
+                
                 $f             = $this->stripSlashesRecursive($f);
                 $processed[$k] = array_merge($field->attributes, $f);
 
@@ -684,7 +684,7 @@ html;
 
                     $fields[$k]['column' . $i] = $this->processFieldExpr($f['column' . $i]);
                 }
-            } else if (method_exists($class, 'processExpr')) {
+            }else if (method_exists($class, 'processExpr')) {
                 $field             = new $class;
                 $field->attributes = $f;
                 $field->builder    = $this;

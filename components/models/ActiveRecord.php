@@ -1930,6 +1930,19 @@ class ActiveRecord extends CActiveRecord {
                                 }
                             }
                             if(is_array($new) && is_array($attr)){
+                                
+                                foreach ($new as $k => $v) {
+                                    if (is_array($v)) {
+                                        unset($new[$k]);
+                                    }
+                                }
+                                
+                                foreach ($attr as $k => $v) {
+                                    if (is_array($v)) {
+                                        unset($attr[$k]);
+                                    }
+                                }
+                                
                                 if (array_diff($new, $attr) || array_diff($attr, $new)) {
                                     $model->attributes = $new;
                                     if ($relType == 'CHasOneRelation') {
