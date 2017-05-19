@@ -723,6 +723,7 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function loadRelation($name, $criteria = []) {
+
         if (is_array($name)) {
             $result = $this->loadSubRelation($name);
             foreach ($result as $k => $v) {
@@ -731,13 +732,12 @@ class ActiveRecord extends CActiveRecord {
             return $result;
         }
 
-        if (!isset($this->__relations[$name]))
+        if (!isset($this->__relations[$name]) && $name != 'currentModel')
             return [];
 
         if (!$criteria) {
             $criteria = [];
         }
-
         if ($name == 'currentModel' || is_null($name)) {
             $this->__relations['currentModel'] = $this->getRelatedArray($criteria);
         } else {
@@ -901,7 +901,7 @@ class ActiveRecord extends CActiveRecord {
         ## generate sql;
         $command = $builder->createFindCommand($tableSchema, $cdbCriteria);
         $sql     = $command->text;
-
+        
         if ($returnCdbCommand) {
             return $command;
         }

@@ -1026,7 +1026,7 @@ class DataSource extends FormField {
         }
 
 
-        $rawData = $this->model->loadRelation($this->relationTo, $criteria, false);
+        $rawData = $this->model->loadRelation($this->relationTo, $criteria);
 
         ## cleanup rawData from relation
         // foreach ($rawData as $dataIdx=>$data) {
