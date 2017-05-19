@@ -8,7 +8,12 @@ class PsDefaultController extends Controller {
      */
     public function actionIndex() {
         if (Yii::app()->user->isGuest) {
-            $this->redirect(array("login"));
+            $redir = '';
+            if (isset($_GET['redir'])) {
+                $redir = '&redir=' . $_GET['redir'];
+            }
+            
+            $this->redirect(array("login" . $redir));
         } else {
             if (is_array(Yii::app()->user->info)) {
                 foreach(Yii::app()->user->info['roles'] as $role) {
@@ -126,6 +131,10 @@ class PsDefaultController extends Controller {
      * Displays the login page
      */
     public function actionLogin() {
+        if (isset($_GET['redir'])) {
+            Yii::app()->user->returnUrl = $_GET['redir'];
+        }
+
         if (!Yii::app()->user->isGuest) {
             $this->redirect(Yii::app()->user->returnUrl);
         }
@@ -135,10 +144,6 @@ class PsDefaultController extends Controller {
         if (isset($_POST['ajax']) && $_POST['ajax'] === 'login-form') {
             echo CActiveForm::validate($model);
             Yii::app()->end();
-        }
-
-        if (isset($_GET['redir'])) {
-            Yii::app()->user->returnUrl = $_GET['redir'];
         }
 
         // collect user input data

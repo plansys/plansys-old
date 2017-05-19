@@ -345,7 +345,7 @@ EOF;
         $this->layout        = "//layouts/blank";
 
 
-        if (Setting::get('app.theme') == 'flatwhite') {
+        if (Setting::get('app.theme') != 'oldblue') {
             Asset::registerCss('application.static.css.main');
         }
 

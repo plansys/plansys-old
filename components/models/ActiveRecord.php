@@ -723,6 +723,7 @@ class ActiveRecord extends CActiveRecord {
     }
 
     public function loadRelation($name, $criteria = []) {
+
         if (is_array($name)) {
             $result = $this->loadSubRelation($name);
             foreach ($result as $k => $v) {
@@ -731,13 +732,12 @@ class ActiveRecord extends CActiveRecord {
             return $result;
         }
 
-        if (!isset($this->__relations[$name]))
+        if (!isset($this->__relations[$name]) && $name != 'currentModel')
             return [];
 
         if (!$criteria) {
             $criteria = [];
         }
-
         if ($name == 'currentModel' || is_null($name)) {
             $this->__relations['currentModel'] = $this->getRelatedArray($criteria);
         } else {
@@ -852,7 +852,7 @@ class ActiveRecord extends CActiveRecord {
             if (isset($criteria['aggregate'])) {
                 $criteriaAggregate = $criteria['aggregate'];
                 unset($criteria['aggregate']);
-                $cdbCriteria       = new CDbCriteria($criteria);
+                $cdbCriteria       = new CDbCriteria($this->convertPagingCriteria($criteria));
                 $tableSchema       = $tableModel->metadata->tableSchema;
                 $this->processAggregate($this->__relations[$name], $criteriaAggregate, $tableSchema, $cdbCriteria);
             }
@@ -901,7 +901,7 @@ class ActiveRecord extends CActiveRecord {
         ## generate sql;
         $command = $builder->createFindCommand($tableSchema, $cdbCriteria);
         $sql     = $command->text;
-
+        
         if ($returnCdbCommand) {
             return $command;
         }
@@ -1935,13 +1935,27 @@ class ActiveRecord extends CActiveRecord {
                                     unset($attr[$k]);
                                 }
                             }
-
-                            if (array_diff($new, $attr) || array_diff($attr, $new)) {
-                                $model->attributes = $new;
-                                if ($relType == 'CHasOneRelation') {
-                                    $model->{$relForeignKey} = $this->{$pk};
+                            if(is_array($new) && is_array($attr)){
+                                
+                                foreach ($new as $k => $v) {
+                                    if (is_array($v)) {
+                                        unset($new[$k]);
+                                    }
                                 }
-                                $model->save();
+                                
+                                foreach ($attr as $k => $v) {
+                                    if (is_array($v)) {
+                                        unset($attr[$k]);
+                                    }
+                                }
+                                
+                                if (array_diff($new, $attr) || array_diff($attr, $new)) {
+                                    $model->attributes = $new;
+                                    if ($relType == 'CHasOneRelation') {
+                                        $model->{$relForeignKey} = $this->{$pk};
+                                    }
+                                    $model->save();
+                                }    
                             }
                         } else {
                             $this->loadRelation($rel->name);

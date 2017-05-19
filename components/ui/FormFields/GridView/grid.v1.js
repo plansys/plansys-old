@@ -26,8 +26,6 @@ app.directive('gridView', function($timeout, $http) {
                 $scope.defaultPageSize = $el.find("data[name=dpz]:eq(0)").text();
                 $scope.datasource = parent[$el.find("data[name=datasource]:eq(0)").text()];
                 
-                
-                
                 $scope.checkboxCol = false;
                 $scope.checkMode = function() {
                     if ($el.width() < 750) {
@@ -971,8 +969,6 @@ app.directive('gridView', function($timeout, $http) {
                             $scope.checkbox[colName] = [];
                         }
 
-                        
-                        
                         if (cursor.attr("lv") > level) {
                             if (cursor.hasClass("r")) {
                                 var rowFound = -1;
@@ -981,7 +977,7 @@ app.directive('gridView', function($timeout, $http) {
                                         rowFound = a;
                                     }
                                 }
-                                if (cursor.find(".cbl-" + colName).length > 0) {
+                                if (level < 0 || cursor.find(".cbl-" + colName).length > 0) {
                                     if (isChecked) {
                                         if (rowFound < 0) {
                                             $scope.checkbox[colName].push(row);
@@ -1000,6 +996,7 @@ app.directive('gridView', function($timeout, $http) {
                                     }
                                 }
                             }
+                            
                             else if (cursor.hasClass("g")) {
                                 cursor.find(".cb-" + colName).prop('checked', isChecked);
                             }

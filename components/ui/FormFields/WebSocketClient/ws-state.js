@@ -34,9 +34,11 @@ app.directive('webSocketState', function($timeout, $http) {
                               if (e.data.indexOf('connect:') === 0) {
                                    $timeout(function() {
                                         $scope.config.cid = e.data.split(":")[1];
-                                        $scope.sendQueue.forEach(function(item) {
-                                             $scope.executeSend(item.params);
-                                        });
+                                        if ($scope.isArray($scope.sendQueue)) {
+                                             $scope.sendQueue.forEach(function(item) {
+                                                  $scope.executeSend(item.params);
+                                             });
+                                        }
                                         $scope.sendQueue = [];
                                         
                                         if (typeof $scope.connectedFunc == 'function') {

@@ -11,7 +11,7 @@ class WebUser extends CWebUser {
      * @param mixed $params (opt) Parameters for this operation, usually the object to access.
      * @return bool Permission granted?
      */
-    public function checkAccess($operation, $params = []) {
+    public function checkAccess($operation, $params=[]) {
         if (empty($this->id)) {
             // Not identified => no rights
             return false;
@@ -21,12 +21,12 @@ class WebUser extends CWebUser {
             return false;
         }
 
-        $role = $this->getState("fullRole");
+        $role = $this->getState('fullRole');
         // allow access if the operation request is the current user's role
         return ($operation === $role);
     }
 
-    protected function changeIdentity($id,$name,$states) {
+    protected function changeIdentity($id, $name, $states) {
         @Yii::app()->getSession()->regenerateID(true);
         $this->setId($id);
         $this->setName($name);
@@ -47,8 +47,8 @@ class WebUser extends CWebUser {
 
     public function getUseLdap() {
         $useLdap = Setting::get('ldap');
-        if (is_null($useLdap)) return false;
-        else {
+        if (is_null($useLdap)) { return false;
+        } else {
             return $useLdap['enable'];
         }
 
@@ -70,7 +70,7 @@ class WebUser extends CWebUser {
         if (isset($this->roleInfo['home_url'])) {
             return $this->roleInfo['home_url'];
         } else {
-            return "";
+            return '';
         }
     }
 
@@ -89,12 +89,12 @@ class WebUser extends CWebUser {
         if (isset($this->roleInfo['menu_path'])) {
             return $this->roleInfo['menu_path'];
         } else {
-            return "";
+            return '';
         }
     }
 
-    public function getReturnUrl($defaultUrl = null) {
-        if (is_null($defaultUrl) && $this->homeUrl != "") {
+    public function getReturnUrl($defaultUrl=null) {
+        if (is_null($defaultUrl) && $this->homeUrl != '') {
             $defaultUrl = [$this->homeUrl];
         }
 
@@ -102,20 +102,19 @@ class WebUser extends CWebUser {
     }
 
     public function getInfo() {
-        if (Setting::$mode == "init" || Setting::$mode == "install") {
-            return "{}";
+        if (Setting::$mode == 'init' || Setting::$mode == 'install') {
+            return '{}';
         }
 
         if (Yii::app()->user->isGuest) {
-            return "{}";
+            return '{}';
         }
-
 
         $attr = false;
         if (isset(Yii::app()->session['userinfo'])) {
             $attr = Yii::app()->session['userinfo'];
         }
-        $baseSession = "";
+        $baseSession = '';
         if (isset(Yii::app()->session['baseSession'])) {
             $baseSession = Yii::app()->session['baseSession'];
         }
@@ -126,12 +125,12 @@ class WebUser extends CWebUser {
                 $attr = false;
             }
         }    
-
+        
         if (!$attr) {
             if (is_null($this->model)) {
                 return false;
             }
-
+            
             $attr = $this->model->getAttributes(true, false);
             unset($attr['password']);
             $attr['role']                   = $this->role;
