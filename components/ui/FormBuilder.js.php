@@ -20,7 +20,7 @@ ob_start();
     <?php ob_start(); ?>
     var plansys = <?php echo json_encode(Setting::get('app')); ?>;
     
-    app.controller("<?= $modelClass ?>Controller", function ($scope, $parse, $timeout, $http, $localStorage, $filter) {
+    app.controller("<?php echo $modelClass ?>Controller", function ($scope, $parse, $timeout, $http, $localStorage, $filter) {
         $scope.form = <?php echo json_encode($this->form); ?>;
         $scope.model = <?php echo @json_encode($data['data'], JSON_PARTIAL_OUTPUT_ON_ERROR); ?>;
         $scope.errors = <?php echo @json_encode($data['errors']); ?>;
@@ -50,8 +50,8 @@ ob_start();
         }
         
         if (window.plansys) {
-            window.plansys.rootPath = '<?php echo str_replace("\\","/",Setting::getRootPath()); ?>';
-            window.plansys.repoPath = '<?php echo str_replace("\\","/",Setting::getRootPath() . DIRECTORY_SEPARATOR . Setting::get("repo.path")); ?>';
+            window.plansys.rootPath = '<?php echo str_replace('\\','/',Setting::getRootPath()); ?>';
+            window.plansys.repoPath = '<?php echo str_replace('\\','/',Setting::getRootPath() . DIRECTORY_SEPARATOR . Setting::get('repo.path')); ?>';
             window.plansys.baseUrl = "<?php echo Yii::app()->baseUrl ?>";
         }
 
@@ -142,7 +142,7 @@ ob_start();
 
         $scope.rel = {};
 
-        <?php if (!Yii::app()->user->isGuest): ?>
+        <?php if (!Yii::app()->user->isGuest) : ?>
         $scope.user = <?php echo @json_encode(Yii::app()->user->info); ?>;
         if ($scope.user != null) {
             $scope.user.role = [];
@@ -170,20 +170,20 @@ ob_start();
         }
         <?php endif; ?>
 
-        <?php if (is_object(Yii::app()->controller) && is_object(Yii::app()->controller->module)): ?>
-        $scope.module = '<?= Yii::app()->controller->module->id ?>';
+        <?php if (is_object(Yii::app()->controller) && is_object(Yii::app()->controller->module)) : ?>
+        $scope.module = '<?php echo Yii::app()->controller->module->id ?>';
         <?php endif; ?>
 
-        <?php if (Yii::app()->user->hasFlash('info')): ?>
-        $scope.flash = '<?= Yii::app()->user->getFlash('info'); ?>';
+        <?php if (Yii::app()->user->hasFlash('info')) : ?>
+        $scope.flash = '<?php echo Yii::app()->user->getFlash('info'); ?>';
         <?php endif; ?>
 
-        <?php if (isset($data['validators'])): ?>
+        <?php if (isset($data['validators'])) : ?>
         $scope.validators = <?php echo @json_encode($data['validators']); ?>;
         <?php endif; ?>
 
-        <?php if (is_subclass_of($this->model, 'ActiveRecord') && isset($data['isNewRecord'])): ?>
-        $scope.isNewRecord = <?php echo $data['isNewRecord'] ? "true" : "false" ?>;
+        <?php if (is_subclass_of($this->model, 'ActiveRecord') && isset($data['isNewRecord'])) : ?>
+        $scope.isNewRecord = <?php echo $data['isNewRecord'] ? 'true' : 'false' ?>;
         <?php endif; ?>
 
         $scope.form.title = document.title;
@@ -206,17 +206,17 @@ ob_start();
                         if (!!button) {
                             var baseurl = button.url;
                             if (typeof button.url != 'string' || button.url.trim() == '' || button.url.trim() == '#') {
-                                baseurl = '<?= Yii::app()->urlManager->parseUrl(Yii::app()->request) ?>';
+                                baseurl = '<?php echo Yii::app()->urlManager->parseUrl(Yii::app()->request) ?>';
                             }
     
                             var parseParams = $parse(button.urlparams);
                             var urlParams = angular.extend($scope.getParams, parseParams($scope));
                         } else {
-                            var baseurl = '<?= Yii::app()->urlManager->parseUrl(Yii::app()->request) ?>';
+                            var baseurl = '<?php echo Yii::app()->urlManager->parseUrl(Yii::app()->request) ?>';
                             var urlparams = {};
                         }
                         var url = Yii.app.createUrl(baseurl, urlParams);
-                        $("div[ng-controller=<?= $modelClass ?>Controller] form").attr('action', url).submit();
+                        $("div[ng-controller=<?php echo $modelClass ?>Controller] form").attr('action', url).submit();
                     }
                 });
             }
@@ -241,14 +241,14 @@ ob_start();
                         type = 'update';
                     }
                     
-                    <?php if (Setting::get('app.auditTrail') != 'Disabled'): ?>
+                    <?php if (Setting::get('app.auditTrail') != 'Disabled') : ?>
                     // send tracking information
                     $http.post(Yii.app.createUrl('/sys/auditTrail/track', {
                         t: type
                     }), $scope.pageInfo).success(function (d) {
                         submit();
                     });
-                    <?php else: ?>
+                    <?php else : ?>
                     submit();
                     <?php endif; ?>
                 } else {
@@ -257,7 +257,7 @@ ob_start();
             }
         };
 
-        $("div[ng-controller=<?= $modelClass ?>Controller] form").submit(function (e) {
+        $("div[ng-controller=<?php echo $modelClass ?>Controller] form").submit(function (e) {
             if ($scope.uploading.length > 0) {
                 alert("Mohon tunggu sampai proses file upload selesai.");
                 e.preventDefault();
@@ -278,18 +278,18 @@ ob_start();
 
         $scope.uploading = [];
         $scope.dataGrids = {length: 0};
-        $("[ng-controller=<?= $modelClass ?>Controller] .data-grid-loader").each(function () {
+        $("[ng-controller=<?php echo $modelClass ?>Controller] .data-grid-loader").each(function () {
             $scope.dataGrids[$(this).attr('name')] = false;
             $scope.dataGrids.length++;
         });
         function inlineJS() {
-            $("div[ng-controller=<?= $modelClass ?>Controller]").css('opacity', 1);
-            <?= implode("\n            ", explode("\n", $inlineJS)); ?>
+            $("div[ng-controller=<?php echo $modelClass ?>Controller]").css('opacity', 1);
+            <?php echo implode("\n            ", explode("\n", $inlineJS)); ?>
         }
 
         function inlineJS2() {
-            $("div[ng-controller=<?= $modelClass ?>Controller]").css('opacity', 1);
-            <?= implode("\n            ", explode("\n", @$inlineJS2)); ?>
+            $("div[ng-controller=<?php echo $modelClass ?>Controller]").css('opacity', 1);
+            <?php echo implode("\n            ", explode("\n", @$inlineJS2)); ?>
         }
         
         // Service related JS

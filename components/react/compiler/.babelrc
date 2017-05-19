@@ -3,12 +3,15 @@
         ["es2015", {
             "modules": false
         }],
-        // webpack understands the native import syntax, and uses it for tree shaking
-
-        "react"
-        // Transpile React components to JavaScript
+        "react",
+        "stage-1"
     ],
     "plugins": [
+        "transform-react-handled-props",
+        ["transform-react-remove-prop-types", {
+          "mode": "wrap"
+        }],
+        "transform-export-extensions",
         "react-hot-loader/babel",
         "syntax-dynamic-import"
         // Enables React code to work with HMR.
