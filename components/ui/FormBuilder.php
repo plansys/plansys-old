@@ -1265,7 +1265,14 @@ EOF;
         } else {
             $inlineJS2 = '';
         }
-        $script = include("FormBuilder.js.php");
+        
+        ## if FormBuilder.js.php is available on app.components then use it
+        $appScript = Yii::getPathOfAlias('app.components.ui') . DIRECTORY_SEPARATOR . "FormBuilder.js.php";
+        if (is_file($appScript)) {
+            $script = include($appScript);
+        } else {
+            $script = include("FormBuilder.js.php");
+        }
         return $script;
     }
 
