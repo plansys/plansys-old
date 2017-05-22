@@ -128,7 +128,6 @@ class GridView extends FormField {
             $this->hasEditable = true;
         }
         
-        
         $c['options']['sortable'] = false;
 
         return $c;
