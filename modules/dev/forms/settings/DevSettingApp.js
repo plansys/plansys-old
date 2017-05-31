@@ -1,1 +1,0 @@
-$scope.timestamp = new Date(); 

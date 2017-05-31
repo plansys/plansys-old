@@ -1,9 +1,0 @@
-import 'react';
-import 'react-dom';
-import 'react-hyperscript';
-import 'react-hot-loader';
-import 'classnames';
-import 'lodash';
-import 'lodash/fp';
-import 'debug';
-import 'prop-types';
