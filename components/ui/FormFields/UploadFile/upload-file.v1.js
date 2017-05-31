@@ -313,7 +313,7 @@ app.directive('uploadFile', function ($timeout, Upload, $http) {
 
                 //check if file is defined from outside
                 $scope.checkFile = function () {
-                    if ($scope.value != "") {
+                    if ($scope.value != "null") {
                         $scope.thumb = '';
                         var request = $http({
                             method: "post",
